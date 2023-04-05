@@ -1,6 +1,9 @@
 # Proxmox VM provisioning via Terraform
 
 ## Prerequisites
+### Proxmox cluser
+With at least two nodes
+
 ###  Clone git repository 
 via
 ```
@@ -57,8 +60,12 @@ Terraform terminology:
 ## Configuring Proxmox Terraform Provider
 
 Follow instructions from https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md
-and create a user and a token associated with that user (see
+and create a user and a token associated with that user.
+See
 https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md#creating-the-connection-via-username-and-api-token).
+and
+https://pve.proxmox.com/wiki/User_Management
+for more information.
 
 You might need to deviate from the instructions above in the following
 aspects:
@@ -118,6 +125,32 @@ following tasks:
   authentication or connection details.
 - Overall, terraform init is an essential command that ensures that your
   Terraform configuration is set up correctly and ready to be used.
+
+## Proxmox Provider Limitations
+Here are some
+- Cannot clone VMs to other nodes (each node needs to have its own
+  template).
+- Requires Qemu Guest Agent pre-installed inside the templates
+- Rough around the edges (many bugs and lots of inconsistent behavior). 
+- A bit slow
+
+## Creating VM templates via `vm-cloud-init-shell` scripts
+from
+`https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell`
+repo.
+
+Make sure to use the same parameters as you specified in `my.tfvar` file above
+along with
+```
+Pz_VM_NAME_PREFIX=vm-4-tf-
+N_VMS=2
+Pz_DISK_FORMAT='qcow2'
+```
+
+As a result you are expected to have VS `vm-4-tf-1` and `vm-4-tf-2`
+located on different nodes on Proxmox cluster (same nodes that you
+specified in `my.tfvar` file).
+
 
 ## Make sure that Provider is able to connect to your Proxmox
 via
@@ -279,5 +312,14 @@ terraform state show YOUR_RESOURCE # listed by the command above
 To make sure you understand what resources should to be under source
 control and what should not.
 
+
+## References
+
+- https://github.com/Telmate/terraform-provider-proxmox
+- https://pve.proxmox.com/wiki/User_Management
+- https://github.com/Telmate/terraform-provider-proxmox/issues/687#issuecomment-1479322276
+- https://blog.gruntwork.io/an-introduction-to-terraform-f17df9c6d180#a9b0
+- https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9
+- https://upcloud.com/resources/tutorials/terraform-variables
 
 
