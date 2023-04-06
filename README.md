@@ -18,6 +18,5 @@ the next level!
 
 | Example | Details |
 |------|-------|
-| [Example 1](./01-proxmox-vm-provisioning-basics) | Provisioning VMs
-inside Proxmox cluster, Terraform basics  |
+| [Example 1](./01-proxmox-vm-provisioning-basics) | Provisioning VMs inside Proxmox cluster, Terraform basics  |
 
