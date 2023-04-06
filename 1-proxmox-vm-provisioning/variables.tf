@@ -8,15 +8,15 @@ variable "bridge" {
   type = string
 }
 variable "cpu" {
-  type = string
+  type    = string
   default = "host"
 }
 variable "cores" {
-  type = string
+  type    = string
   default = 2
 }
 variable "memory" {
-  type = string
+  type    = string
   default = 4000
 }
 variable "gateway" {
@@ -32,5 +32,5 @@ variable "disk_storage" {
   type = string
 }
 variable "target_nodes" {
-  type    = list(string)
+  type = list(string)
 }

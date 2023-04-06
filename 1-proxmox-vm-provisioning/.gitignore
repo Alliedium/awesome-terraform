@@ -85,3 +85,6 @@ override.tf.json
 terraform.rc
 
 *.log
+*.dot
+*.tfplan
+*.pdf
