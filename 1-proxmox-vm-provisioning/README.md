@@ -64,36 +64,36 @@ the same parameters inside Terraform variable values file `my.tfvars`
 
 Terraform terminology:
 
-- *Infrastructure as Code (IaC)*: The practice of managing and
+- **Infrastructure as Code (IaC)**: The practice of managing and
   provisioning infrastructure through code.
-- *Provider*: A plugin that allows Terraform to interact with a specific
+- **Provider**: A plugin that allows Terraform to interact with a specific
   cloud or service provider, such as AWS or Azure.
-- *Resource*: A component of your infrastructure that can be managed by
+- **Resource**: A component of your infrastructure that can be managed by
   Terraform. Examples of resources include virtual machines, databases,
   and network interfaces.
-- *State*: The state of your infrastructure, which is stored in a file
+- **State**: The state of your infrastructure, which is stored in a file
   called the "state file". This file contains information about the
   resources that Terraform is managing, their current state, and their
   dependencies.
-- *Configuration*: A set of files written in a human-readable syntax that
+- **Configuration**: A set of files written in a human-readable syntax that
   resembles JSON or HCL (HashiCorp Configuration Language), and are used
   to specify the desired state of the infrastructure. Once you have
   defined your infrastructure as code in Terraform configuration files,
   you can use the Terraform CLI to plan, apply, and manage changes to
   your infrastructure.
-- *Plan*: A preview of the changes that Terraform will make to your
+- **Plan**: A preview of the changes that Terraform will make to your
   infrastructure. You can review and approve the plan before applying
   the changes.
-- *Apply*: The process of making changes to your infrastructure based on
+- **Apply*: The process of making changes to your infrastructure based on
   the Terraform plan.
-- *Module*: A reusable component of your infrastructure that can be shared
+- **Module**: A reusable component of your infrastructure that can be shared
   across different Terraform configurations. Modules can be used to
   create abstractions, simplify complex configurations, and promote
   consistency across environments.
-- *Output*: The result of a Terraform configuration. Outputs can be used
+- **Output**: The result of a Terraform configuration. Outputs can be used
   to display information about the resources that Terraform has created,
   such as IP addresses or DNS names.
-- *Variable*: A value that can be passed to a Terraform configuration.
+- **Variable**: A value that can be passed to a Terraform configuration.
   Variables can be used to customize your infrastructure, such as
   specifying the number of instances to create or the size of a storage
   volume.
@@ -132,9 +132,9 @@ following tasks:
 Follow instructions from https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md
 and create a user and a token associated with that user.
 See
-https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md#creating-the-connection-via-username-and-api-token).
-and
-https://pve.proxmox.com/wiki/User_Management
+- https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md#creating-the-connection-via-username-and-api-token)
+- https://pve.proxmox.com/wiki/User_Management
+
 for more information.
 
 You might need to deviate from the instructions above in the following
