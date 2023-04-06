@@ -201,6 +201,48 @@ which consists of '`resource` blocks, `provider` blocks, and variables
   range for your network so that you can use it in multiple places
   within your code.
 
+## Study the variable files
+
+In Terraform, `variables.tf` is used to define the input variables that
+your modules and configurations will use, while terraform.tfvars is used
+to set the values for those variables.
+
+The order of precedence for variable values in Terraform is:
+
+Command-line flags: You can set variable values using -var or -var-file
+flags when running the terraform apply or terraform plan commands. These
+values take the highest precedence.
+
+In our case `my.tfvars` file provides the values for variables defined
+in `variables.tf` and is passed via `-var-file` flag.
+
+Environment variables: You can set variable values using environment
+variables, such as TF_VAR_name. These values take precedence over values
+set in `terraform.tfvars`, but not over values set using command-line
+flags.
+
+`terraform.tfvars` files: Terraform automatically loads any
+`terraform.tfvars` or `terraform.<workspace>.tfvars` files in the current
+working directory. Values set in these files take precedence over values
+set in `variables.tf`, but are overridden by values set using command-line
+flags or environment variables.
+
+`terraform.tfvars.json` files: If a `terraform.tfvars.json` file is present
+in the current working directory, it will also be automatically loaded.
+Like `terraform.tfvars`, values set in this file take precedence over
+values set in `variables.tf`, but are overridden by values set using
+command-line flags or environment variables.
+
+`variables.tf` files: The default values defined in `variables.tf` are used
+if no other values are specified.
+
+In summary, the order of precedence for variable values in Terraform is
+command-line flags, environment variables, `terraform.tfvars` files,
+`terraform.tfvars.json` files, and finally `variables.tf` files. When
+setting variable values, it's important to keep this order of precedence
+in mind to avoid unexpected behavior.
+
+
 ## Generate execution plan
 via
 `terraform plan -var-file my.tfvar` 
@@ -227,6 +269,11 @@ We can also optionally save the plan to a file via
 
 ```
 terraform plan -var-file my.tfvar -out my.plan`
+```
+
+The stored plan can be shown via
+```
+terraform show ./my.plan
 ```
 
 ## Apply the changes
@@ -261,6 +308,19 @@ Once the changes are applied you can check that VMs are created
 via Proxmox Web UI. Please note that our Terraform configuration
 automatically launches VMs (thanks to `oncreate = true` flag in
 `main.tf`).
+
+
+Once the changes are applied Terraform stores its state in
+`terraform.tfstate` file. The current state can be shown via
+```
+terraform show
+```
+
+or 
+
+```
+terraform show ./terraform.tfstate
+```
 
 ## Destroy the created resources 
 via
