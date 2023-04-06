@@ -29,8 +29,8 @@ sudo pacman -S graphviz
 Telmate Proxmox provider for Terraform 
 (https://github.com/Telmate/terraform-provider-proxmox) which we'll use
 below has a limitations:
-- Creating a VM based on template located on a different node is not supported. 
-  template). See https://github.com/Telmate/terraform-provider-proxmox/issues/536#issuecomment-1144705404
+- Creating a VM based on template located on a different node is not supported
+  (see https://github.com/Telmate/terraform-provider-proxmox/issues/536#issuecomment-1144705404).
 - Requires QEMU Guest Agent pre-installed inside the templates if
   `oncreate` parameter is set to `true`. Please note that `oncreate` will be replace with `vm_state` attribute 
   in the next version (see https://github.com/Telmate/terraform-provider-proxmox/pull/725).
@@ -84,7 +84,7 @@ Terraform terminology:
 - **Plan**: A preview of the changes that Terraform will make to your
   infrastructure. You can review and approve the plan before applying
   the changes.
-- **Apply*: The process of making changes to your infrastructure based on
+- **Apply**: The process of making changes to your infrastructure based on
   the Terraform plan.
 - **Module**: A reusable component of your infrastructure that can be shared
   across different Terraform configurations. Modules can be used to
