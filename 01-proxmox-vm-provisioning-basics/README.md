@@ -218,12 +218,10 @@ https://graphviz.org/doc/info/lang.html for more information:
 ```
 terraform graph > my-config-graph.dot
 ```
-Now we can render this graph using GraphViz (see [[Prerequisites]]):
+Now we can render this graph to PDF using GraphViz (see [[Prerequisites]]):
 ```
 dot -Tpdf my-config-graph.dot > my-config-graph.pdf
 ```
-which would produce PDF file with the graph rendered using vector
-graphics.
 
 ## Study the variable files
 
