@@ -1,4 +1,4 @@
-# Proxmox VM provisioning via Terraform
+# Terraform Basics, Proxmox VM provisioning
 
 ## Prerequisites
 ### Proxmox cluser
