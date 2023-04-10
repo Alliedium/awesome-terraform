@@ -689,6 +689,61 @@ After that VMs `vm-tf-clone-prod-1` and `vm-tf-clone-prod-2` would have
 to be deleted manually in Proxmox.
 
 ## Importing state
+Terraform allows to manage resources that not necessarily created via
+Terraform in the first place. Let us try to bring VMs `vm-4-tf-1` and
+`vm-4-tf-1` (that are originally created via "vm-cloud-init-shell" 
+scripts from https://github.com/Alliedium/awesome-proxmox) under Terraform management.
+
+As the first step you need to find `vmid` of VMs `vm-4-tf-1` and
+`vm-4-tf-2` manually in Proxmox GUI. Let us assume that in our case
+those `vmid`s are `9011` and `9012`. Let us assume that these VMs are on
+Proxmox nodes `arctic16` and `arctic20` (which can be checked in Proxmox
+as well). Having this information is sufficient for importing states for
+both VMs. Let us import the first one:
+
+```
+terraform import -var-file ./my.tfvars 'proxmox_vm_qemu.light_vm["vm-4-tf-1"]' 'arctic16/qemu/9011'
+```
+Running 
+```
+terraform show
+```
+shows that our state contains parameters of a single VM while the second
+one `vm-4-tf-2` (`vmid=9012`) is still not tracked by Terraform.
+
+Now, if we try to run
+
+```
+terraform plan -var-file ./my.tfvars
+```
+we see that the plan suggests creating one VMs `vm-4-tf-2` from scratch
+and replacing `vm-4-tf-1`. The replacing is suggested because of two
+parameters:
+ - `full_clone`
+ - `clone`
+which have values that do not match values specified in our Terraform
+configuration. We can workaround that by editing our state manually as the
+state is just a JSON file located at `terraform.tfstate.d/import-test/terraform.tfstate`.
+Let us do the following changes in this file:
+- Set `full_clone = "true"`
+- Set `clone = "vm-4-tf-1"`.
+
+After this change 
+```
+terraform plan -var-file ./my.tfvars
+```
+would only suggest to modify one VM (which is expected as such
+parameters and `memory`, `cores` and some others do not match) and
+create `vm-4-tf-2`. 
+
+Now, if we import the second VM `vm-4-tf-2` via 
+
+```
+terraform import -var-file ./my.tfvars 'proxmox_vm_qemu.light_vm["vm-4-tf-2"]' 'arctic16/qemu/9012' 
+```
+, then make similar changes in its state we finally end up having both VMs under Terraform management.
+
+
 
 
 ## References
