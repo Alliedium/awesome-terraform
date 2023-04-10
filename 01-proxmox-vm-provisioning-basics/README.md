@@ -211,6 +211,20 @@ which consists of '`resource` blocks, `provider` blocks, and variables
   range for your network so that you can use it in multiple places
   within your code.
 
+## Configuration formatting and validation
+Terraform comes with a built-in configuration formatting tool which can
+be called via `terraform fmt`. Additionally, Terraform allows for
+configuration validation via `terraform validate` command which checks
+that a configuration is syntactically valid and internally consistent
+
+### Exercise
+- introduce cosmetic changes to main.tf (by increasing a number of
+  leading spaces on one of the strings)
+- run `git diff` to see the delta
+- run `terraform validate` to check if configuration is still valid
+- run `terraform fmt` and then `git diff` to make sure that your changes
+  are gone.
+
 ## Show the configuration graph
 Terraform can scan the configuration (even before it is applied) and 
 generate the structure of the configuration as a graph in DOT language - see

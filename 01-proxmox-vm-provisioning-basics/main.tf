@@ -21,12 +21,12 @@ locals {
       vm2clone    = "vm-4-tf-1"
     },
     # EXPERIMENT BLOCK 1 
-#    {
-#      ip_address  = "${var.vm_ip_prefix}3"
-#      name        = "vm-tf-clone-3"
-#      target_node = var.target_nodes[1]
-#      vm2clone    = "vm-4-tf-2"
-#    },
+    #    {
+    #      ip_address  = "${var.vm_ip_prefix}3"
+    #      name        = "vm-tf-clone-3"
+    #      target_node = var.target_nodes[1]
+    #      vm2clone    = "vm-4-tf-2"
+    #    },
     {
       ip_address  = "${var.vm_ip_prefix}2"
       name        = "vm-tf-clone-2"
