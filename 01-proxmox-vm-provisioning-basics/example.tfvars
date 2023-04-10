@@ -8,8 +8,8 @@ disk_storage = "black-nfs-0"
 target_nodes = ["arctic16", "arctic20"]
 
 vm_group_names = {
-  default    = "-tf-clone"
-  production = "-tf-clone-prod"
+  default     = "-tf-clone"
+  production  = "-tf-clone-prod"
   import-test = "-4-tf"
 }
 

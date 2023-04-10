@@ -184,11 +184,11 @@ variables as the ones you specified in `.env` file for
 "vm-cloud-init-shell" scripts (see [[Prerequisites]] section). 
 
 ## Study the main configuration file
-The file `main.tf` is a required file in a Terraform project that
+The file `main.tf` is a file in a Terraform project that
 defines the resources that will be created or managed by Terraform. This
 file contains the main Terraform code for your project and is typically
 used to define the infrastructure resources you need to provision, such
-as virtual machines, storage accounts, or network interfaces.
+as virtual machines, storage accounts, or network interfaces. 
 
 In `main.tf`, you will define the resources using the Terraform syntax,
 which consists of '`resource` blocks, `provider` blocks, and variables
@@ -223,6 +223,9 @@ which consists of '`resource` blocks, `provider` blocks, and variables
   example, you might define a local variable to hold the IP address
   range for your network so that you can use it in multiple places
   within your code.
+
+  *Please note that naming the main file as `main.tf` is just a
+  convention!*
 
 ## Configuration formatting and validation
 Terraform comes with a built-in configuration formatting tool which can
@@ -296,6 +299,8 @@ In summary, the order of precedence for variable values in Terraform is
 When setting variable values, it's important to keep this order of precedence
 in mind to avoid unexpected behavior.
 
+*Please note that naming the variables definition file as `variables.tf` is just a
+  convention, same as for `main.tf`.*
 
 ## Generate execution plan
 via
@@ -380,7 +385,7 @@ via Proxmox Web UI. Please note that our Terraform configuration
 automatically launches VMs (thanks to `oncreate = true` flag in
 `main.tf`).
 
-## Show the current state
+## Current state and outputs
 
 
 Once the changes are applied Terraform stores its state in
@@ -427,6 +432,17 @@ current state. For example, to show the state of the first VM run
 ```
 terraform state show 'proxmox_vm_qemu.light_vm["vm-tf-clone-1"]'
 ```
+
+Now, what if we want to know VMs' IDs without looking into internals of
+Terraform state? Terraform outputs allow to do exactly this - take some
+of the parameters know only after applying the plan and making them
+"outputs" of the configuration. This is achieved via using `output`
+block which we did in `main.tf` (see
+https://developer.hashicorp.com/terraform/language/values/outputs).
+
+As a result, when we run `terraform apply` we see the VMs' IDs as
+outputs which is pretty convinient. However, the full power of outputs
+is shown when modules and dependencies are used. 
 
 
 ## Refreshing the local state to sync with the changes of remote infrastructure

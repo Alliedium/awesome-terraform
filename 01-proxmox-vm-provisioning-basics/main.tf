@@ -52,6 +52,15 @@ provider "proxmox" {
 
 }
 
+output "vm_ids" {
+  value = [for o in proxmox_vm_qemu.light_vm : o.id]
+  #
+  # value = proxmox_vm_qemu.light_vm[*].id # (same but using Splat expressions
+  # 
+  # #   https://developer.hashicorp.com/terraform/language/expressions/splat
+  # # )
+}
+
 resource "proxmox_vm_qemu" "light_vm" {
 
   for_each = {
@@ -109,4 +118,3 @@ resource "proxmox_vm_qemu" "light_vm" {
   ipconfig0  = "ip=${each.value.ip_address}/16,gw=${var.gateway}"
   nameserver = var.nameserver
 }
-
