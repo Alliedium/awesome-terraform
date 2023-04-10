@@ -653,12 +653,43 @@ As a result we have 6 VMs:
    - `vm-tf-clone-unk-1`
    - `vm-tf-clone-unk-2`
 
-VMs in each of these environments can be managed separately because 
-they are given differed `id` and `vmid` inside the configurations.
+VMs in each of the workspaces are differed `id` and `vmid` inside the configurations.
 
 This can be verified via `terraform show` run inside each of the
 workspaces or by looking directly into state files that are stored
 inside `terraform.tfstate.d` folder.
+
+As a result, VMs in one workspace can be managed separately
+from VMs tracked in other workspaces. For instance, running
+
+```
+terraform destroy -var-file ./my.tfvars
+```
+run from `default` environment results in deletion of only 2 VMs `vm-tf-clone-1` and `vm-tf-clone-2`.
+
+Let us switch to `default` workspace and try to delete `production`
+workspace:
+
+```
+terraform workspace select default
+terraform workspace delete production
+```
+
+By default, Terraform would reject the last command with "Deleting this
+workspace would cause Terraform to lose track of any associated remote
+objects" warning which is fair as having no state would mean having no
+mapping between configuration resources and objects in remote
+infrastructure.
+
+We can, however, force the deletion of `production` workspace:
+```
+terraform workspace delete -force production
+```
+After that VMs `vm-tf-clone-prod-1` and `vm-tf-clone-prod-2` would have
+to be deleted manually in Proxmox.
+
+## Importing state
+
 
 ## References
 
