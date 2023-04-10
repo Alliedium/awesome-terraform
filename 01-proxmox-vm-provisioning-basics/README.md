@@ -525,7 +525,7 @@ tracks resources (by their IDs). Once 2 VMs are created uncomment the
 blocks for the third VM (`EXPERIMENT BLOCK 1`) and try to apply the
 changes. You'll see that instead of creating one more VM Terraform tries
 to both change 1 VM and create one more VM. This is different from how
-Terraform behaved in Experiment #1 above, right? Please try to explain
+Terraform behaved in Exercise 2 above, right? Please try to explain
 the difference in behavior (hint - it has to do with the new way to
 tracking resources).
 
