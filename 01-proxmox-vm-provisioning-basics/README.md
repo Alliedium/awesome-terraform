@@ -761,6 +761,13 @@ terraform import -var-file ./my.tfvars 'proxmox_vm_qemu.light_vm["vm-4-tf-2"]' '
 ```
 , then make similar changes in its state we finally end up having both VMs under Terraform management.
 
+Similarly to how we imported one VM state after another we can remove
+their sates one by one via `terraform state rm` command. The list of all
+resources in the state can be show via
+```
+terraform state list
+```
+
 Now, as the final step, let us remove all VMs we created via Terraform
 (that doesn't include `vm-4-tf-1` and `vm-4-tf-2`) and all workspaces
 except `default`:
