@@ -13,23 +13,25 @@ variable "pve_api_url" {
 }
 
 locals {
+  vm_group_name = lookup(var.vm_group_names, terraform.workspace, var.vm_group_name_default)
+
   virtual_machines = [
     {
       ip_address  = "${var.vm_ip_prefix}1"
-      name        = "vm-tf-clone-1"
+      name        = "vm-tf-clone${local.vm_group_name}-1"
       target_node = var.target_nodes[0]
       vm2clone    = "vm-4-tf-1"
     },
     # EXPERIMENT BLOCK 1 
     #    {
     #      ip_address  = "${var.vm_ip_prefix}3"
-    #      name        = "vm-tf-clone-3"
+    #      name        = "vm-tf-clone${local.vm_group_name}-3"
     #      target_node = var.target_nodes[1]
     #      vm2clone    = "vm-4-tf-2"
     #    },
     {
       ip_address  = "${var.vm_ip_prefix}2"
-      name        = "vm-tf-clone-2"
+      name        = "vm-tf-clone${local.vm_group_name}-2"
       target_node = var.target_nodes[1]
       vm2clone    = "vm-4-tf-2"
     }
@@ -57,6 +59,8 @@ resource "proxmox_vm_qemu" "light_vm" {
     vm.name => vm # Perfect, since VM names also need to be unique
     # EXPERIMENT BLOCK 2:
     # index => vm # (unique but not perfect, since index will change frequently)
+
+
     # uuid() => vm (do NOT do this! gets recreated everytime)
   }
 

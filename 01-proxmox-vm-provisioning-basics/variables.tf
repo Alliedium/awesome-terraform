@@ -34,3 +34,10 @@ variable "disk_storage" {
 variable "target_nodes" {
   type = list(string)
 }
+variable "vm_group_names" {
+  type = map(string)
+}
+variable "vm_group_name_default" {
+  type = string
+}
+

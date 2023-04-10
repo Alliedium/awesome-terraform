@@ -66,33 +66,44 @@ Terraform terminology:
 
 - **Infrastructure as Code (IaC)**: The practice of managing and
   provisioning infrastructure through code.
+
 - **Provider**: A plugin that allows Terraform to interact with a specific
   cloud or service provider, such as AWS or Azure.
+
 - **Resource**: A component of your infrastructure that can be managed by
   Terraform. Examples of resources include virtual machines, databases,
   and network interfaces.
+
 - **State**: The state of your infrastructure, which is stored in a file
   called the "state file". This file contains information about the
   resources that Terraform is managing, their current state, and their
-  dependencies.
+  dependencies. The primary purpose of Terraform state is to store
+  bindings between objects in a remote system and resource instances
+  declared in your configuration.
+
 - **Configuration**: A set of files written in a human-readable syntax that
   resembles JSON or HCL (HashiCorp Configuration Language), and are used
   to specify the desired state of the infrastructure. Once you have
   defined your infrastructure as code in Terraform configuration files,
   you can use the Terraform CLI to plan, apply, and manage changes to
   your infrastructure.
+
 - **Plan**: A preview of the changes that Terraform will make to your
   infrastructure. You can review and approve the plan before applying
   the changes.
+
 - **Apply**: The process of making changes to your infrastructure based on
   the Terraform plan.
+
 - **Module**: A reusable component of your infrastructure that can be shared
   across different Terraform configurations. Modules can be used to
   create abstractions, simplify complex configurations, and promote
   consistency across environments.
+
 - **Output**: The result of a Terraform configuration. Outputs can be used
   to display information about the resources that Terraform has created,
   such as IP addresses or DNS names.
+
 - **Variable**: A value that can be passed to a Terraform configuration.
   Variables can be used to customize your infrastructure, such as
   specifying the number of instances to create or the size of a storage
@@ -106,7 +117,7 @@ terraform init
 is the first command you need to run when working with a new or existing
 Terraform configuration. This command initializes various settings and
 downloads the required plugins and modules needed for your
-configuration. When you run terraform init, Terraform will perform the
+configuration. When you run `terraform init`, Terraform will perform the
 following tasks:
 
 - Initialize a new or existing Terraform working directory: Terraform
@@ -114,16 +125,16 @@ following tasks:
   will contain the state file, as well as other files and directories
   required for the configuration.
 - Download required provider plugins: If the configuration specifies any
-  providers that are not yet installed, terraform init will download the
+  providers that are not yet installed, `terraform init` will download the
   necessary provider plugins and install them in the appropriate
   directory.
 - Download required modules: If the configuration uses any modules,
-  terraform init will download the necessary module code and install it
+  `terraform init` will download the necessary module code and install it
   in the appropriate directory.
 - Initialize the backend: If the configuration uses a remote backend,
   terraform init will initialize the backend and set up any necessary
   authentication or connection details.
-- Overall, terraform init is an essential command that ensures that your
+- Overall, `terraform init` is an essential command that ensures that your
   Terraform configuration is set up correctly and ready to be used.
 
 
@@ -217,7 +228,7 @@ be called via `terraform fmt`. Additionally, Terraform allows for
 configuration validation via `terraform validate` command which checks
 that a configuration is syntactically valid and internally consistent
 
-### Exercise
+### Exercise 1
 - introduce cosmetic changes to main.tf (by increasing a number of
   leading spaces on one of the strings)
 - run `git diff` to see the delta
@@ -325,7 +336,9 @@ Please note that running just
 ```
 terraform show
 ```
-displays the current state, not the plan. Since at this state we are not
+displays the current state, not the plan!
+
+At this stage we are not
 supposed to how any state (just yet) `terraform show` will output just
 `No state`.
 
@@ -367,6 +380,7 @@ automatically launches VMs (thanks to `oncreate = true` flag in
 
 ## Show the current state
 
+
 Once the changes are applied Terraform stores its state in
 `terraform.tfstate` file. The current state can be shown via
 ```
@@ -378,8 +392,26 @@ or
 ```
 terraform show ./terraform.tfstate
 ```
+Please note in addition to the values of all the parameters mentioned in
+our configuration `main.tf` the state also contains IDs of remote
+resources that can be show via
 
-It is also possible to list all the resources in the current state via
+```
+terraform show|grep -E "^[ ]*id"
+```
+These IDs are used to bind resources in our configuration with remote
+resources in Proxmox. This is well explained in the official
+documentation "the primary purpose of Terraform state is to store
+bindings between objects in a remote system and resource instances
+declared in your configuration. When Terraform creates a remote object
+in response to a change of configuration, it will record the identity of
+that remote object against a particular resource instance, and then
+potentially update or delete that object in response to future
+configuration changes."
+(https://developer.hashicorp.com/terraform/language/state).
+
+While `terraform show` shows the whole state it is also possible to list
+all the resources in the current state via
 ```
 terraform state list
 ```
@@ -393,6 +425,47 @@ current state. For example, to show the state of the first VM run
 ```
 terraform state show 'proxmox_vm_qemu.light_vm["vm-tf-clone-1"]'
 ```
+
+
+## Refreshing the local state to sync with the changes of remote infrastructure
+Sometimes the remote infrastructure can get out of sync with the local
+state. This might happen because of intentional or unintentional changes
+to the remote infrastructure (for instance - directly via the cloud
+provider UI or CLI). In such cases it might be useful to refresh the
+local state to match the changed state of the remote infrastructure.
+
+Let us simulate the change to the remote infrastructure by changing VM
+name manually from `vm-tf-clone-1` to `vm-tf-clone-01`.
+
+Now, if we run 
+
+```
+terraform plan -var-file ./my.tfvars -refresh=false
+```
+
+we'll see that plan suggests no new changes. That is because we disabled
+the automatic refresh that is otherwise run every time we run `terraform plan`.
+
+However, running `terrafrom refresh` before `terraform plan
+-refresh=false` would make terraform suggest to rename of the VM back to
+`vm-tf-clone-1`:
+
+```
+terraform refresh -var-file ./my.tfvars 
+terraform plan -var-file ./my.tfvars -refresh=false
+```
+The same effect can be achieved by running `terraform plan` without 
+`-refresh=false` flag:
+
+```
+terraform plan -var-file ./my.tfvars
+```
+We can now conclude that `terraform plan` syncs the local state with the
+actual state of the remote infrastructure and only then applies the
+changes. If configuration is unchanged that it results in the plan that
+reverts the changes made to the remote infrastructure not via Terraform.
+
+
 
 ## Destroy the created resources 
 via
@@ -421,16 +494,16 @@ would have the same effect as the command above.
 `main.tf` file contains a few commented blocks that are there for you to
 uncomment and see how this impacts the way Terraform works.
 
-### Experiment #1
+### Exercise 2
 Uncomment the block with the third VM (marked with `EXPERIMENT BLOCK 1`),
 apply the changes and make sure that it just creates one more VM. Then 
 delete resources via `terraform delete`.
 
-### Experiment #2
+### Exercise 3
 Revert the changes made in the previous experiment. 
 Then replace `vm.name => vm` in `for_each` with the commented content of
 `EXPERIMENT BLOCK 2`. Then observe the change in the way terraform
-tracks resources (by their ids). Once 2 VMs are created uncomment the
+tracks resources (by their IDs). Once 2 VMs are created uncomment the
 blocks for the third VM (`EXPERIMENT BLOCK 1`) and try to apply the
 changes. You'll see that instead of creating one more VM Terraform tries
 to both change 1 VM and create one more VM. This is different from how
@@ -438,23 +511,154 @@ Terraform behaved in Experiment #1 above, right? Please try to explain
 the difference in behavior (hint - it has to do with the new way to
 tracking resources).
 
-### Experiment #3
+### Exercise 4
 Revert the changes made in the previous experiments. Then change the
 disk size for VMs in `my.tfvars` and run `terraform apply -var-file
 ./my.tfvars`. The disk of both VMs (including the file system on the
-disks) should get extended automatically.
+disks) should get extended automatically. Do the same for 
+- `memory`
+- `cores`
+- `vm_ip_prefix`
 
-### Experiment #4
-Revert the changes made in the previous experiments and then change the
-IP address prefix for VMs in `my.tfvars`. Running 
-`terraform apply -var-file ./my.tfvars` should get IP addresses of VMs
-changed.
+## Tracking Terraform configurations in Git
+Study `.gitignore` file to make sure you understand what resources
+should to be under source control and what should not.
 
+## Terraform CLI vs Terraform Cloud Workspaces
+The official Terraform documentation (see
+https://developer.hashicorp.com/terraform/cloud-docs/workspaces)
+describes Terraform Cloud as a service that helps teams use
+Terraform together. It manages Terraform runs in a consistent and
+reliable environment, and includes easy access to shared state and
+secret data, access controls for approving changes to infrastructure, a
+private registry for sharing Terraform modules, detailed policy controls
+for governing the contents of Terraform configurations, and more.
 
-## Study `.gitignore`
-to make sure you understand what resources should to be under source
-control and what should not.
+Terraform Enterprise, on the other hand, is a self-hosted distribution
+of Terraform Cloud that organizations with advanced security and compliance
+can decide to deploy on-prem.
 
+- Terraform CLI workspaces "are associated with
+  a specific working directory and isolate multiple state files in the
+  same working directory, letting you manage multiple groups of
+  resources with a single configuration. The Terraform CLI does not
+  require you to create CLI workspaces." Refer to Workspaces in the
+  Terraform Language documentation for more details (see
+  https://developer.hashicorp.com/terraform/language/state/workspaces)
+- Terraform Cloud workspaces "represent all of the collections of
+  infrastructure in an organization. They are also a major component of
+  role-based access in Terraform Cloud. You can grant individual users
+  and user groups permissions for one or more workspaces that dictate
+  whether they can manage variables, perform runs, etc. You cannot
+  manage resources in Terraform Cloud without creating at least one
+  workspace." (see https://developer.hashicorp.com/terraform/cloud-docs/workspaces#terraform-cloud-vs-terraform-cli-workspaces).
+
+## Working with Terraform CLI workspaces
+In this section we will focus exclusively on Terraform CLI workspaces
+(and not Terraform Cloud Workspaces) and we will refer to them as
+"Terraform Workspaces" or just "workspaces".
+
+Terraform provides a very useful command `terraform workspace` that
+allows to create, delete, list, select namespaces and also show a
+current namespace. As mentioned above, each workspace contains an
+isolated state so that you can manage different remote sets of resources
+using the same configuration. By default, there is only one workspace
+named `default` and it is active by default. You can check that via
+```
+terraform workspace list
+```
+and
+```
+terraform workspace show
+```
+Let us apply the configuration via
+
+```
+terraform apply -var-file ./my.tfvars
+```
+and wait for VMs to be provisioned in Proxmox cluster.
+
+After that let us now create a new workspace named `production` and make it active via
+
+```
+terraform workspace select production
+```
+
+We can check that `production` is now an active workspace:
+```
+terraform workspace show
+```
+
+Running 
+```
+terraform show
+```
+should produce `No state` message which means that inside this new
+workspace there is no any information about the remote infrastructure we
+created just a few seconds ago.
+
+It is important not note that the current workspace for Terraform
+configuration is persistent on disk and is stored inside
+`.terraform/environment` file. That is, if you change the current
+workspace in one terminal tab, it will change in all other tabs. This is
+different from how `conda` environments work (see
+https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
+
+If we now try to build the plan via
+
+```
+terraform plan -var-file ./my.tfvars
+```
+
+we see that Terraform suggests to create 2 new VMs named as
+
+- `vm-tf-clone-prod-1`
+- `vm-tf-clone-prod-2`
+
+from scratch. 
+That is because Terraform "doesn't know" anything about the VMs (because
+there is no state) we
+created from inside "default" namespace. 
+
+The names of VMs are generated adaptively in `locals` block in `main.tf`
+via using `terraform.workspace` variable that is set by Terraform
+automatically to contain the name of current workspace. This allows us
+to map the name of the workspace to the `vm_group_name` inside `locals`
+block. The mapping is defined in `my.tfvars` in `vm_group_names` and
+`vm_group_name_default` variables (the latter defines `vm_group_name`
+for workspaces that are not mapped to anything in `vm_group_names` map). 
+
+Let us apply configuration to create VMs:
+```
+terraform apply -var-file ./my.tfvars
+```
+We can repeat this for one more environment named `other` which
+creates
+
+- `vm-tf-clone-unk-1`
+- `vm-tf-clone-unk-2`
+
+Here, `unk` is used as `vm_group_name` because `other` is not mapped
+to anything in `vm_group_names` map.
+
+As a result we have 6 VMs:
+
+- `default` workspace (state is stored in `terraform.tfstate`):
+   - `vm-tf-clone-1`
+   - `vm-tf-clone-2`
+- `production` workspace (state is in `terraform.tfstate.d/production/terraform.tfstate`):
+   - `vm-tf-clone-prod-1`
+   - `vm-tf-clone-prod-2`
+- `other` workspace (state is in `terraform.tfstate.d/other/terraform.tfstate`):
+   - `vm-tf-clone-unk-1`
+   - `vm-tf-clone-unk-2`
+
+VMs in each of these environments can be managed separately because 
+they are given differed `id` and `vmid` inside the configurations.
+
+This can be verified via `terraform show` run inside each of the
+workspaces or by looking directly into state files that are stored
+inside `terraform.tfstate.d` folder.
 
 ## References
 
