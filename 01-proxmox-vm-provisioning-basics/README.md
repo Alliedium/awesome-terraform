@@ -34,7 +34,9 @@ below has a limitations:
 - Requires QEMU Guest Agent pre-installed inside the templates if
   `oncreate` parameter is set to `true`. Please note that `oncreate` will be replace with `vm_state` attribute 
   in the next version (see https://github.com/Telmate/terraform-provider-proxmox/pull/725).
-- Rough around the edges (many bugs and lots of inconsistent behavior). 
+- Rough around the edges (many bugs and lots of inconsistent behavior):
+   - https://github.com/Telmate/terraform-provider-proxmox/issues
+   - https://github.com/Telmate/terraform-provider-proxmox/issues/284
 
 The first limitation requires us to create a separate template (or just
 a VM which can be used as a template) on each target node of Proxmox.
@@ -743,8 +745,24 @@ terraform import -var-file ./my.tfvars 'proxmox_vm_qemu.light_vm["vm-4-tf-2"]' '
 ```
 , then make similar changes in its state we finally end up having both VMs under Terraform management.
 
+Now, as the final step, let us remove all VMs we created via Terraform
+(that doesn't include `vm-4-tf-1` and `vm-4-tf-2`) and all workspaces
+except `default`:
 
+```
+terraform workspace select production
+terraform destroy -var-file ./my.tfvars
 
+terraform workspace select other
+terraform destroy -var-file ./my.tfvars
+
+terraform workspace select default
+terraform destroy -var-file ./my.tfvars
+
+terraform workspace delete production
+terraform workspace delete other
+terraform workspace delete -force import-test
+```
 
 ## References
 
