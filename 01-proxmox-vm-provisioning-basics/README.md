@@ -181,7 +181,7 @@ cp ./example.tfvar ./my.tfvars
 ```
 and then edit `my.tfvars` to match your case. Make sure to use the same
 variables as the ones you specified in `.env` file for
-"vm-cloud-init-shell" scripts (see [[Prerequisites]] section). 
+"vm-cloud-init-shell" scripts (see [Prerequisites](#prerequisites) section). 
 
 ## Study the main configuration file
 The file `main.tf` is a file in a Terraform project that
