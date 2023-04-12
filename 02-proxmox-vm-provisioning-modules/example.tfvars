@@ -1,5 +1,5 @@
 pool         = "infra-e10v9"
-vm_ip_prefix = "10.109.1.1"
+vm_start_ip = "10.109.1.11/24"
 bridge       = "e10v9"
 nameserver   = "10.109.1.1"
 gateway      = "10.109.1.1"

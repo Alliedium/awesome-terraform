@@ -27,33 +27,21 @@ provider "proxmox" {
 }
 
 locals {
-  vm_group_name = lookup(var.vm_group_names, terraform.workspace, var.vm_group_name_default)
+  n_vms = 2
+  vm_ip_subnet_parts = split("/", var.vm_start_ip)
+  last_octet = tonumber(split(".",local.vm_ip_subnet_parts[0])[3])
+  bits2add = 32 - tonumber(local.vm_ip_subnet_parts[1])
+  netmask4replace = format("/%s",local.vm_ip_subnet_parts[1])
 
-  virtual_machines = [
-    {
-      ip_address  = "${var.vm_ip_prefix}1"
-      name        = "vm${local.vm_group_name}-1"
-      target_node = var.target_nodes[0]
-      vm2clone    = "vm-4-tf-1"
-    },
-    # EXPERIMENT BLOCK 1 
-    #    {
-    #      ip_address  = "${var.vm_ip_prefix}3"
-    #      name        = "vm${local.vm_group_name}-3"
-    #      target_node = var.target_nodes[1]
-    #      vm2clone    = "vm-4-tf-2"
-    #    },
-    {
-      ip_address  = "${var.vm_ip_prefix}2"
-      name        = "vm${local.vm_group_name}-2"
-      target_node = var.target_nodes[1]
-      vm2clone    = "vm-4-tf-2"
-    }
-  ]
+  vm_group_name = lookup(var.vm_group_names, terraform.workspace, var.vm_group_name_default)
+  vm_sec_ids = range(0,local.n_vms)
+  vm_sec_pos_ids = [for id in local.vm_sec_ids: id + 1]
+  vm_names = formatlist("vm${local.vm_group_name}-%d", local.vm_sec_pos_ids)
+  vm2clone_names = formatlist("vm-4-tf-%d", local.vm_sec_pos_ids)
 }
 
 output "vm_ids" {
-  value = [for o in module.easy_vm : o.id]
+  value = [for o in module.masters : o.id]
   #
   # value = servers[*].id # (same but using Splat expressions
   # 
@@ -61,26 +49,18 @@ output "vm_ids" {
   # # )
 }
 
-module "easy_vm" {
+module "masters" {
 
-  source = "./modules/easy_vm"
+  source = "./modules/k8s_master_node"
 
-  for_each = {
-    for index, vm in local.virtual_machines :
-    vm.name => vm # Perfect, since VM names also need to be unique
-    # EXPERIMENT BLOCK 2:
-    # index => vm # (unique but not perfect, since index will change frequently)
+  for_each = zipmap(local.vm_names, local.vm_sec_ids)
 
-
-    # uuid() => vm (do NOT do this! gets recreated everytime)
-  }
-
-  name        = each.value.name
-  target_node = each.value.target_node
+  name        = each.key
+  target_node = var.target_nodes[each.value]
 
   pool = var.pool
 
-  vm2clone   = each.value.vm2clone
+  vm2clone   = local.vm2clone_names[each.value]
 
   cores   = var.cores
   cpu     = var.cpu
@@ -92,7 +72,7 @@ module "easy_vm" {
 
   # Setup the ip address using cloud-init.
   # Keep in mind to use the CIDR notation for the ip.
-  ip_address = each.value.ip_address
+  ip_address = replace(cidrsubnet(var.vm_start_ip,local.bits2add,local.last_octet+each.value),"/32",local.netmask4replace)
   gateway    = var.gateway
   nameserver = var.nameserver
 }

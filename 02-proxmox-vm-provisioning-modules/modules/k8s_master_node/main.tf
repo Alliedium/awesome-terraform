@@ -54,10 +54,10 @@ variable "gateway" {
 }
 
 output "id" {
-  value = proxmox_vm_qemu.light_vm.id
+  value = proxmox_vm_qemu.vm.id
 }
 
-resource "proxmox_vm_qemu" "light_vm" {
+resource "proxmox_vm_qemu" "vm" {
 
   name        = var.name
   target_node = var.target_node
@@ -101,6 +101,6 @@ resource "proxmox_vm_qemu" "light_vm" {
 
   # Setup the ip address using cloud-init.
   # Keep in mind to use the CIDR notation for the ip.
-  ipconfig0  = "ip=${var.ip_address}/16,gw=${var.gateway}"
+  ipconfig0  = "ip=${var.ip_address},gw=${var.gateway}"
   nameserver = var.nameserver
 }

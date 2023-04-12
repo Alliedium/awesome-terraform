@@ -1,8 +1,9 @@
 variable "pool" {
   type = string
 }
-variable "vm_ip_prefix" {
+variable "vm_start_ip" {
   type = string
+  description = "IP of the first VM in CIDR notation, '192.168.3.11/24' for example"
 }
 variable "bridge" {
   type = string
