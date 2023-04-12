@@ -45,13 +45,13 @@ variable "gateway" {
 }
 
 output "id" {
-  value = module.k8s_master_node.id
+  value = module.k8s_agent_node.id
 }
 
-module "k8s_master_node" {
+module "k8s_agent_node" {
   source = "../light_vm"
 
-  desc = "k8s master node"
+  desc = "K8s agent node"
 
   base_vm_name = var.base_vm_name
   target_node = var.target_node

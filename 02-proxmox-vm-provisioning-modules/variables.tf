@@ -1,10 +1,12 @@
 variable "workspace_params" {
   type = map(object({
     vm = object({
-      name_spec      = string,
+      master_name_spec = string,
+      agent_name_spec  = string,
       base_name_spec = string,
-      count          = number,
-      start_ip    = string,
+      n_masters      = number,
+      n_agents       = number,
+      start_ip       = string,
       cores          = optional(number, 2),
       cpu            = optional(string, "kvm64"),
       memory         = optional(number, 2048),
@@ -19,14 +21,18 @@ variable "workspace_params" {
     pve_api_url = string
   }))
   description = <<EOF
-    (Required) vm.name_spec      - name template with a single placeholder
+    (Required) vm.master_name_spec  - name template with a single placeholder
        corresponding to sequential VM id, passed directly to
        https://developer.hashicorp.com/terraform/language/functions/format  
 
-    (Required) vm.base_name_spec - same as vm.name_spec but for the base VM 
-       (the VM from which to clone to create the new VM).
+    (Required) vm.agent_name_spec - same as vm.master_name_spec but for 
+       the base VM (the VM from which to clone to create the new VM).
 
-    (Required) vm.count          - number of VMs to create 
+    (Required) vm.base_name_spec - same as vm.agent_name_spec but for
+       the base VM (the VM from which to clone to create the new VM).
+
+    (Required) vm.n_masters      - number of K8s nodes to create 
+    (Required) vm.n_agents       - number of K8s nodes to create 
 
     (Required) vm.start_ip       - IP address of the first VM, all other VMs' IP addresses will be calculated by
        incrementing the last octet by 1.
@@ -51,9 +57,11 @@ variable "workspace_params" {
 variable "workspace_default_params" {
   type = object({
     vm = object({
-      name_spec      = string,
+      master_name_spec = string,
+      agent_name_spec  = string,
       base_name_spec = string,
-      count          = number,
+      n_masters      = number,
+      n_agents       = number,
       start_ip       = string,
       cores          = optional(number, 2),
       cpu            = optional(string, "kvm64"),
