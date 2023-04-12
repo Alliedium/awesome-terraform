@@ -7,14 +7,9 @@ terraform {
   }
 }
 
-variable "pve_api_url" {
-  type = string
-
-}
-
 provider "proxmox" {
   pm_tls_insecure = true
-  pm_api_url      = var.pve_api_url
+  pm_api_url      = local.wparams.pve_api_url
   pm_otp          = ""
   pm_log_enable   = true
   pm_log_file     = "terraform-plugin-proxmox.log"
@@ -32,20 +27,20 @@ locals {
     terraform.workspace,
     var.workspace_default_params
   )
-  vm_group_name = local.wparams.vm_group_name
-  n_vms         = local.wparams.n_vms
-  vm_start_ip   = local.wparams.vm_start_ip
+  vm_name_spec      = local.wparams.vm.name_spec
+  base_vm_name_spec = local.wparams.vm.base_name_spec
+  n_vms             = local.wparams.vm.count
+  vm_start_ip       = local.wparams.vm.start_ip
 
   vm_ip_subnet_parts = split("/", local.vm_start_ip)
   last_octet         = tonumber(split(".", local.vm_ip_subnet_parts[0])[3])
   bits2add           = 32 - tonumber(local.vm_ip_subnet_parts[1])
   netmask4replace    = format("/%s", local.vm_ip_subnet_parts[1])
 
-
   vm_sec_ids     = range(0, local.n_vms)
   vm_sec_pos_ids = [for id in local.vm_sec_ids : id + 1]
-  vm_names       = formatlist("vm${local.vm_group_name}-%d", local.vm_sec_pos_ids)
-  vm2clone_names = formatlist("vm-4-tf-%d", local.vm_sec_pos_ids)
+  vm_names       = formatlist(local.vm_name_spec, local.vm_sec_pos_ids)
+  base_vm_names  = formatlist(local.base_vm_name_spec, local.vm_sec_pos_ids)
 }
 
 output "vm_ids" {
@@ -59,19 +54,19 @@ module "masters" {
   for_each = zipmap(local.vm_names, local.vm_sec_ids)
 
   name        = each.key
-  target_node = local.wparams.target_nodes[each.value]
+  target_node = local.wparams.vm.target_nodes[each.value]
 
-  pool = local.wparams.pool
+  pool = local.wparams.vm.pool
 
-  vm2clone = local.vm2clone_names[each.value]
+  base_vm_name = local.base_vm_names[each.value]
 
-  cores  = local.wparams.cores
-  cpu    = local.wparams.cpu
-  memory = local.wparams.memory
+  cores  = local.wparams.vm.cores
+  cpu    = local.wparams.vm.cpu
+  memory = local.wparams.vm.memory
 
-  disk_size    = local.wparams.disk_size
-  disk_storage = local.wparams.disk_storage
-  bridge       = local.wparams.bridge
+  disk_size    = local.wparams.vm.disk_size
+  disk_storage = local.wparams.vm.disk_storage
+  bridge       = local.wparams.vm.bridge
 
   ip_address = replace(
     cidrsubnet(
@@ -82,6 +77,6 @@ module "masters" {
     "/32",
     local.netmask4replace
   )
-  gateway    = local.wparams.gateway
-  nameserver = local.wparams.nameserver
+  gateway    = local.wparams.vm.gateway
+  nameserver = local.wparams.vm.nameserver
 }

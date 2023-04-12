@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-variable "vm2clone" {
+variable "base_vm_name" {
   type        = string
   description = "VM to clone"
 }
@@ -68,7 +68,7 @@ resource "proxmox_vm_qemu" "vm" {
   pool = var.pool
 
   # The template name to clone this vm from
-  clone      = var.vm2clone
+  clone      = var.base_vm_name
   full_clone = true
   oncreate   = true
 
