@@ -15,6 +15,9 @@ variable "workspace_params" {
     bridge        = string
   }))
 }
+
+# Unfortunately, we have to repeat type definition here,
+# see https://github.com/hashicorp/terraform/issues/30386
 variable "workspace_default_params" {
   type = object({
     vm_group_name = string,

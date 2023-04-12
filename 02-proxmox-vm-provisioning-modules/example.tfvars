@@ -27,7 +27,7 @@ workspace_params = {
     gateway       = "10.109.1.1"
     disk_size     = "8G"
     disk_storage  = "black-nfs-0"
-    target_nodes  = ["arctic16", "arctic20"]
+    target_nodes  = ["arctic16", "arctic20", "blackgrid"]
   }
 }
 workspace_default_params = {
