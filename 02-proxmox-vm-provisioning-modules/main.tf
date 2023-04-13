@@ -35,14 +35,37 @@ locals {
   vm_start_ip       = local.wparams.vm.start_ip
 
   # separate IP address from the mask 
-  #     "10.109.1.11/24" -> ["10.109.1.11", "24"]
+  #     "10.109.1.11/20" -> ["10.109.1.11", "20"]
   vm_ip_subnet_parts = split("/", local.vm_start_ip)
-  # store the last IP octet as a number 
-  #     "10.109.1.11" -> 11
-  last_octet = tonumber(split(".", local.vm_ip_subnet_parts[0])[3])
+  #
+  # 20
+  vm_ip_subnet_n_bits = tonumber(local.vm_ip_subnet_parts[1])
+  # extract the free part of IP nas a number 
+  #
+  #   join("",formatlist("%.8b",split(".","10.109.1.11"))) -> "00001010011011010000000100001011"
+  #   substr("00001010011011010000000100001011",20,32) -> "000100001011"
+  #   parseint("000100001011",2) -> 267
+  #
+  vm_ip_free_part = parseint(
+    substr(
+      join(
+        "",
+	formatlist(
+	  "%.8b",
+	  split(
+	    ".",
+	    local.vm_ip_subnet_parts[0]
+	  )
+	)
+      ),
+      local.vm_ip_subnet_n_bits,
+      32
+    ),
+    2
+  )
   # calculate number of "free" bits in subnet
-  #     ["10.109.1.11", "24"] -> 8
-  bits2add = 32 - tonumber(local.vm_ip_subnet_parts[1])
+  #     20 -> 12 
+  bits2add = 32 - local.vm_ip_subnet_n_bits 
   # form a string which will replace "/32"
   #     ["10.109.1.11", "24"] -> "/24"
   netmask4replace = format("/%s", local.vm_ip_subnet_parts[1])
@@ -53,21 +76,21 @@ locals {
         cidrsubnet(
           local.vm_start_ip,
           local.bits2add,
-          local.last_octet + k 
+          local.vm_ip_free_part + k 
         ),
         "/32",
         local.netmask4replace
       )
   ]
   # 
-  master_sec_ids     = range(0, local.n_masters)
-  master_sec_pos_ids = [for id in local.master_sec_ids : id + 1]
+  master_seq_ids     = range(0, local.n_masters)
+  master_seq_pos_ids = [for id in local.master_seq_ids : id + 1]
 
-  agent_sec_ids     = range(0, local.n_agents)
-  agent_sec_pos_ids = [for id in local.agent_sec_ids : id + 1]
+  agent_seq_ids     = range(0, local.n_agents)
+  agent_seq_pos_ids = [for id in local.agent_seq_ids : id + 1]
 
-  master_vm_names = formatlist(local.master_name_spec, local.master_sec_pos_ids)
-  agent_vm_names  = formatlist(local.agent_name_spec, local.agent_sec_pos_ids)
+  master_vm_names = formatlist(local.master_name_spec, local.master_seq_pos_ids)
+  agent_vm_names  = formatlist(local.agent_name_spec, local.agent_seq_pos_ids)
 
   base_vm_names = [
     for id_sec in range(
@@ -106,7 +129,7 @@ module "masters" {
 
   source = "./modules/k8s_master_node"
 
-  for_each = zipmap(local.master_vm_names, local.master_sec_ids)
+  for_each = zipmap(local.master_vm_names, local.master_seq_ids)
 
   name        = each.key
   target_node = local.wparams.vm.target_nodes[each.value]
@@ -127,7 +150,7 @@ module "agents" {
 
   source = "./modules/k8s_agent_node"
 
-  for_each = zipmap(local.agent_vm_names, local.agent_sec_ids)
+  for_each = zipmap(local.agent_vm_names, local.agent_seq_ids)
 
   name        = each.key
   target_node = local.wparams.vm.target_nodes[each.value]
