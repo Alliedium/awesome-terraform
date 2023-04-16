@@ -62,3 +62,8 @@ workspace_default_params = {
   },
   pve_api_url = "https://192.168.2.95:8006/api2/json"
 }
+
+metal_lb_ip_range = "10.109.1.50-10.109.1.70"
+apiserver_endpoint = "10.109.1.20"
+system_timezone = "Your/Timezone"
+

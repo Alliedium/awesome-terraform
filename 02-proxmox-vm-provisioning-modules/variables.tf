@@ -47,7 +47,7 @@ variable "workspace_params" {
     (Required) vm.pool           - name of Proxmox pool
     (Required) vm.target_nodes   - Proxmox target nodes
     (Required) vm.bridge         - network bridge
-    
+
     (Required) pve_api_url       - Proxmox API endpoint url
   EOF
 }
@@ -77,3 +77,22 @@ variable "workspace_default_params" {
     pve_api_url = string
   })
 }
+
+variable "vm_ci_user" { 
+  type = string
+  description = "cloud-init user for provisioning"
+  sensitive = true
+}
+
+variable "vm_ci_password" {
+  type = string
+  description = "cloud-init user's password"
+  sensitive = true
+}
+
+variable "vm_ci_ssh_pub_key_path" {
+ type = string
+ description = "cloud-init user's public ssh key"
+ sensitive = true
+}
+    

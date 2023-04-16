@@ -1,0 +1,7 @@
+pm_api_token_secret = "your-token"
+pm_api_token_id = 'your@pve!token-id'
+vm_ci_user="ciansible"
+vm_ci_password="cisuperpw"
+vm_ci_ssh_pub_key_path="path-you-your-ssh-public-key"
+k3s_token="your-super-duper-secret"
+

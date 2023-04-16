@@ -44,9 +44,34 @@ variable "gateway" {
   type = string
 }
 
+variable "ciuser" { 
+  type = string
+  description = "cloud-init user for provisioning"
+  sensitive = true
+}
+
+variable "cipassword" {
+  type = string
+  description = "cloud-init user's password"
+  sensitive = true
+}
+
+variable "sshkeys" {
+ type = string
+ description = "Newline delimited list of SSH public keys to add to authorized keys file for the cloud-init user"
+ sensitive = true
+}
+
+
+
 output "id" {
   value = module.k8s_master_node.id
 }
+
+output "ip" {
+  value = module.k8s_master_node.ip
+}
+
 
 module "k8s_master_node" {
   source = "../light_vm"
@@ -66,4 +91,8 @@ module "k8s_master_node" {
   nameserver = var.nameserver
   ip_address = var.ip_address
   gateway = var.gateway
+
+  ciuser = var.ciuser
+  cipassword = var.cipassword
+  sshkeys = var.sshkeys
 }

@@ -50,7 +50,6 @@ Make sure to use
 ```
 Pz_VM_NAME_PREFIX=vm-4-tf-
 N_VMS=2
-Pz_DISK_FORMAT='qcow2'
 ```
 in `.env` file for the scripts (see https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell#4-export-variables-from-your-configuration).
 As a result you are expected to have VMs `vm-4-tf-1` and `vm-4-tf-2`

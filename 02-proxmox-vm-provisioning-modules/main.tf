@@ -98,6 +98,8 @@ locals {
       max(local.n_masters, local.n_agents) + 1
     ) : format(local.base_vm_name_spec, id_sec)
   ]
+
+  vm_ci_ssh_private_key_path = trimsuffix(var.vm_ci_ssh_pub_key_path, ".pub")
 }
 
 output "master_ids" {
@@ -105,25 +107,27 @@ output "master_ids" {
 }
 
 output "master_ips" {
-  value = slice(local.ip_addresses,0,local.n_masters) 
+  value = [for o in module.masters : o.ip]
 }
 
 output "agents_ids" {
   value = [for o in module.agents : o.id]
 }
-
-output "agent_ips" {
-  value = slice(
-    local.ip_addresses,
-    local.n_masters,
-    local.n_masters+local.n_agents
-  ) 
+output "agents_ips" {
+  value = [for o in module.agents : o.ip]
 }
 
 output "ids" {
   value = [for o in merge(module.masters, module.agents) : o.id]
 }
 
+output "ips" {
+  value = [for o in merge(module.masters, module.agents) : o.ip]
+}
+
+data "local_file" "vm_ci_ssh_pub_key" {
+  filename = var.vm_ci_ssh_pub_key_path
+}
 
 module "masters" {
 
@@ -144,6 +148,10 @@ module "masters" {
   ip_address = local.ip_addresses[each.value]
   gateway    = local.wparams.vm.gateway
   nameserver = local.wparams.vm.nameserver
+
+  ciuser = var.vm_ci_user
+  cipassword = var.vm_ci_password
+  sshkeys = data.local_file.vm_ci_ssh_pub_key.content
 }
 
 module "agents" {
@@ -165,4 +173,33 @@ module "agents" {
   ip_address = local.ip_addresses[each.value + local.n_masters]
   gateway    = local.wparams.vm.gateway
   nameserver = local.wparams.vm.nameserver
+
+  ciuser = var.vm_ci_user
+  cipassword = var.vm_ci_password
+  sshkeys = data.local_file.vm_ci_ssh_pub_key.content
+}
+
+resource "local_file" "k3s_ansible_inventory_file" {
+  content = templatefile("${path.module}/templates/hosts.yml.tftpl", 
+    {
+      masters = module.masters
+      agents = module.agents
+      ansible_user = var.vm_ci_user
+      ansible_ssh_private_key_file = local.vm_ci_ssh_private_key_path
+    }
+  )
+  filename = "external/k3s-ansible/inventory/terraform/hosts.yml"
+}
+
+resource "local_file" "k3s_ansible_group_vars_all" {
+  content = templatefile("${path.module}/templates/group_vars-all.yml.tftpl", 
+    {
+      metal_lb_ip_range = var.metal_lb_ip_range
+      apiserver_endpoint = var.apiserver_endpoint
+      system_timezone = var.system_timezone
+      k3s_token = var.k3s_token
+      ansible_user = var.vm_ci_user
+    }
+  )
+  filename = "external/k3s-ansible/inventory/terraform/group_vars/all.yml"
 }

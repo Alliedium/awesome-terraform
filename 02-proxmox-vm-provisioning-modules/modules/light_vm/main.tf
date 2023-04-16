@@ -57,8 +57,31 @@ variable "desc" {
   type = string
 }
 
+variable "ciuser" { 
+  type = string
+  description = "cloud-init user for provisioning"
+  sensitive = true
+}
+
+variable "cipassword" {
+  type = string
+  description = "cloud-init user's password"
+  sensitive = true
+}
+
+variable "sshkeys" {
+ type = string
+ description = "Newline delimited list of SSH public keys to add to authorized keys file for the cloud-init user"
+ sensitive = true
+}
+
+
 output "id" {
   value = proxmox_vm_qemu.vm.id
+}
+
+output "ip" {
+  value = proxmox_vm_qemu.vm.default_ipv4_address
 }
 
 resource "proxmox_vm_qemu" "vm" {
@@ -78,6 +101,7 @@ resource "proxmox_vm_qemu" "vm" {
 
   # Activate QEMU agent for this VM
   agent = 1
+  qemu_os = "l26"
 
   os_type = "cloud-init"
   cores   = var.cores
@@ -86,6 +110,11 @@ resource "proxmox_vm_qemu" "vm" {
   cpu     = var.cpu
   memory  = var.memory
   scsihw  = "virtio-scsi-pci"
+
+  # Credentials
+  ciuser = var.ciuser
+  cipassword = var.cipassword
+  sshkeys = var.sshkeys
 
   # Setup the disk
   disk {
