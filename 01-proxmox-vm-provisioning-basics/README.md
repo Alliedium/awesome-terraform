@@ -8,6 +8,8 @@ With at least two nodes
 via
 ```
 git clone https://github.com/Alliedium/awesome-terraform.git` 
+git submodule init
+git submodule update
 cd ./awesome-terraform
 ```
 ### Install terraform
