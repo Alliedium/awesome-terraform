@@ -19,4 +19,6 @@ the next level!
 | Example | Details |
 |------|-------|
 | [Example 1](./01-proxmox-vm-provisioning-basics) | Provisioning VMs inside Proxmox cluster, Terraform basics  |
+| [Example 2](./02-proxmox-k3s-ansible-with-modules) | Provisioning VMs inside Proxmox for K3s cluster, Terraform modules, sensitive vars and templates (for Ansible)  |
+
 
