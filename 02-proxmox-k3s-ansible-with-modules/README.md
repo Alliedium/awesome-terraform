@@ -78,12 +78,19 @@ kubectl get pods --kubeconfig ./k3s-tf.kubeconfig -A
 ```
 
 ## What can be improved
+- We should get rid of `./modules/k8s_agent_node` and
+  `./modules/k8s_master_node` and use `./modules/light_vm` module
+  directly. This is because writing thin wrappers for modules in
+  anti-pattern, see https://developer.hashicorp.com/terraform/language/modules/develop#when-to-write-a-module
+  The reason those two modules were added to this example in the first
+  place is to demonstrate how local modules can reference each other.
 - VM templates can be created via https://github.com/pvelati/ansible-role-proxmox-kvm-mgmt
 instead of using https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell
 - Kubeconfig can be extracted via https://registry.terraform.io/providers/tenstad/remote/latest/docs/data-sources/file
 or via Ansible
 - Wrap k3s-ansible Ansible playbook with our own Ansible playbook that
   automatically waits for cloud-init to finish.
+- `k3s_token` can be generated automatically by Terraform - see https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string
 - We could ignore some of the parameteres via Terraform Lifecycles, see https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle
 - Terraform state can we stored in a remote backend (S3 for instance),
   see https://developer.hashicorp.com/terraform/language/settings/backends/configuration
