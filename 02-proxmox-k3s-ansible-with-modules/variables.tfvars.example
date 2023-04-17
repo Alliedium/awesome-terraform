@@ -3,30 +3,22 @@ workspace_params = {
     vm = {
       master_name_spec = "k8s-master-tf-default-%d"
       agent_name_spec = "k8s-agent-tf-default-%d"
-      base_name_spec = "base-vm-tf-%d"
       n_masters      = 2
       n_agents       = 1
       start_ip       = "10.109.1.11/20"
       pool           = "infra-e10v9"
-      cores          = 2
-      memory         = 2048
       bridge         = "e10v9"
-      nameserver     = "10.109.1.1"
-      gateway        = "10.109.1.1"
       disk_size      = "5G"
       disk_storage   = "black-nfs-0"
-      target_nodes   = ["arctic16", "arctic20"]
-    },
-    pve_api_url = "https://192.168.2.95:8006/api2/json"
+    }
   }
   production = {
     vm = {
       master_name_spec = "k8s-master-tf-prod-%d"
       agent_name_spec = "k8s-agent-tf-prod-%d"
-      base_name_spec = "base-vm-tf-%d"
       n_masters      = 3
       n_agents       = 1
-      start_ip       = "10.109.1.21/20"
+      start_ip       = "10.109.1.31/20"
       pool           = "infra-e10v9"
       cpu            = "host"
       cores          = 4
@@ -36,7 +28,6 @@ workspace_params = {
       gateway        = "10.109.1.1"
       disk_size      = "8G"
       disk_storage   = "black-nfs-0"
-      target_nodes   = ["arctic16", "arctic20", "blackgrid"]
     },
     pve_api_url = "https://192.168.2.95:8006/api2/json"
   }
@@ -52,18 +43,45 @@ workspace_default_params = {
     pool           = "infra-e10v9"
     cpu            = "kvm64"
     cores          = 2
-    memory         = 4096
+    memory         = 2048
     bridge         = "e10v9"
     nameserver     = "10.109.1.1"
     gateway        = "10.109.1.1"
     disk_size      = "4G"
     disk_storage   = "black-nfs-0"
-    target_nodes   = ["arctic16", "arctic20"]
+    target_nodes   = ["arctic16", "arctic20", "blackgrid"]
   },
   pve_api_url = "https://192.168.2.95:8006/api2/json"
 }
 
-metal_lb_ip_range = "10.109.1.50-10.109.1.70"
-apiserver_endpoint = "10.109.1.20"
-system_timezone = "Your/Timezone"
+workspace_sensitive_params = {
+  default = {
+    vm = {
+      ci_user = "suser-def"
+      ci_password = "superpw-def"
+    },
+    metal_lb_ip_range = "10.109.1.50-10.109.1.70" 
+    apiserver_endpoint = "10.109.1.20" 
+  }
+  production = {
+    vm = {
+      ci_user = "suser-prod"
+      ci_password = "superpw-prod"
+    },
+    metal_lb_ip_range = "10.109.1.71-10.109.1.90" 
+    apiserver_endpoint = "10.109.1.30" 
+    k3s_token = "prod-c1k7nhfy26lg5way91eaas2npn5"
+  }
+}
 
+workspace_sensitive_default_params = {
+  vm = {
+    ci_user = "suser"
+    ci_password = "superpw"
+    ci_ssh_pub_key_path = "path-to-your-public-ssh-key"
+    system_timezone = "Your/Timezone"
+  }
+  metal_lb_ip_range = "10.109.1.101 - 10.109.1.110"
+  apiserver_endpoint = "10.109.1.50"
+  k3s_token = "default-c1k7nhfy26lg5way91eaas2npn5"
+}

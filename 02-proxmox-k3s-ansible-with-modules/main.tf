@@ -21,12 +21,55 @@ provider "proxmox" {
 
 }
 
-locals {
-  wparams = lookup(
+module "deepmerge_wparams" {
+  source  = "Invicton-Labs/deepmerge/null"
+  maps = [
+    module.remove_nulls_wparams_def.removed,
+    module.remove_nulls_wparams.removed
+  ]
+}
+
+module "deepmerge_wsensparams" {
+  source  = "Invicton-Labs/deepmerge/null"
+  maps = [
+    module.remove_nulls_wsensparams_def.removed,
+    module.remove_nulls_wsensparams.removed
+  ]
+}
+
+module "remove_nulls_wparams" {
+  source = "./modules/wparam-remove-nulls"
+  object_with_nulls = lookup(
     var.workspace_params,
     terraform.workspace,
     var.workspace_default_params
   )
+}
+
+module "remove_nulls_wsensparams" {
+  source = "./modules/wparam-remove-nulls"
+  object_with_nulls = lookup(
+    var.workspace_sensitive_params,
+    terraform.workspace,
+    var.workspace_sensitive_default_params
+  )
+}
+
+module "remove_nulls_wparams_def" {
+  source = "./modules/wparam-remove-nulls"
+  object_with_nulls = var.workspace_default_params
+}
+
+module "remove_nulls_wsensparams_def" {
+  source = "./modules/wparam-remove-nulls"
+  object_with_nulls = var.workspace_sensitive_default_params
+}
+
+locals {
+
+  wparams = module.deepmerge_wparams.merged
+  wsensparams = module.deepmerge_wsensparams.merged
+
   master_name_spec  = local.wparams.vm.master_name_spec
   agent_name_spec   = local.wparams.vm.agent_name_spec
   base_vm_name_spec = local.wparams.vm.base_name_spec
@@ -50,13 +93,13 @@ locals {
     substr(
       join(
         "",
-	formatlist(
-	  "%.8b",
-	  split(
-	    ".",
-	    local.vm_ip_subnet_parts[0]
-	  )
-	)
+        formatlist(
+          "%.8b",
+          split(
+            ".",
+            local.vm_ip_subnet_parts[0]
+          )
+        )
       ),
       local.vm_ip_subnet_n_bits,
       32
@@ -65,22 +108,22 @@ locals {
   )
   # calculate number of "free" bits in subnet
   #     20 -> 12 
-  bits2add = 32 - local.vm_ip_subnet_n_bits 
+  bits2add = 32 - local.vm_ip_subnet_n_bits
   # form a string which will replace "/32"
   #     ["10.109.1.11", "24"] -> "/24"
   netmask4replace = format("/%s", local.vm_ip_subnet_parts[1])
 
   ip_addresses = [
-    for k in range(0, local.n_masters + local.n_agents):
-      replace(
-        cidrsubnet(
-          local.vm_start_ip,
-          local.bits2add,
-          local.vm_ip_free_part + k 
-        ),
-        "/32",
-        local.netmask4replace
-      )
+    for k in range(0, local.n_masters + local.n_agents) :
+    replace(
+      cidrsubnet(
+        local.vm_start_ip,
+        local.bits2add,
+        local.vm_ip_free_part + k
+      ),
+      "/32",
+      local.netmask4replace
+    )
   ]
   # 
   master_seq_ids     = range(0, local.n_masters)
@@ -99,7 +142,7 @@ locals {
     ) : format(local.base_vm_name_spec, id_sec)
   ]
 
-  vm_ci_ssh_private_key_path = trimsuffix(var.vm_ci_ssh_pub_key_path, ".pub")
+  vm_ci_ssh_private_key_path = trimsuffix(local.wsensparams.vm.ci_ssh_pub_key_path, ".pub")
 }
 
 output "master_ids" {
@@ -126,7 +169,16 @@ output "ips" {
 }
 
 data "local_file" "vm_ci_ssh_pub_key" {
-  filename = var.vm_ci_ssh_pub_key_path
+  filename = local.wsensparams.vm.ci_ssh_pub_key_path
+}
+
+output "wsensparams" {
+  value = local.wsensparams
+  sensitive = true
+}
+
+output "wparams" {
+  value = local.wparams
 }
 
 module "masters" {
@@ -135,23 +187,23 @@ module "masters" {
 
   for_each = zipmap(local.master_vm_names, local.master_seq_ids)
 
-  name        = each.key
-  target_node = local.wparams.vm.target_nodes[each.value]
-  pool = local.wparams.vm.pool
+  name         = each.key
+  target_node  = local.wparams.vm.target_nodes[each.value]
+  pool         = local.wparams.vm.pool
   base_vm_name = local.base_vm_names[each.value]
-  cores  = local.wparams.vm.cores
-  cpu    = local.wparams.vm.cpu
-  memory = local.wparams.vm.memory
+  cores        = local.wparams.vm.cores
+  cpu          = local.wparams.vm.cpu
+  memory       = local.wparams.vm.memory
   disk_size    = local.wparams.vm.disk_size
   disk_storage = local.wparams.vm.disk_storage
   bridge       = local.wparams.vm.bridge
-  ip_address = local.ip_addresses[each.value]
-  gateway    = local.wparams.vm.gateway
-  nameserver = local.wparams.vm.nameserver
+  ip_address   = local.ip_addresses[each.value]
+  gateway      = local.wparams.vm.gateway
+  nameserver   = local.wparams.vm.nameserver
 
-  ciuser = var.vm_ci_user
-  cipassword = var.vm_ci_password
-  sshkeys = data.local_file.vm_ci_ssh_pub_key.content
+  ciuser     = local.wsensparams.vm.ci_user
+  cipassword = local.wsensparams.vm.ci_password
+  sshkeys    = data.local_file.vm_ci_ssh_pub_key.content
 }
 
 module "agents" {
@@ -160,31 +212,31 @@ module "agents" {
 
   for_each = zipmap(local.agent_vm_names, local.agent_seq_ids)
 
-  name        = each.key
-  target_node = local.wparams.vm.target_nodes[each.value]
-  pool = local.wparams.vm.pool
+  name         = each.key
+  target_node  = local.wparams.vm.target_nodes[each.value]
+  pool         = local.wparams.vm.pool
   base_vm_name = local.base_vm_names[each.value]
-  cores  = local.wparams.vm.cores
-  cpu    = local.wparams.vm.cpu
-  memory = local.wparams.vm.memory
+  cores        = local.wparams.vm.cores
+  cpu          = local.wparams.vm.cpu
+  memory       = local.wparams.vm.memory
   disk_size    = local.wparams.vm.disk_size
   disk_storage = local.wparams.vm.disk_storage
   bridge       = local.wparams.vm.bridge
-  ip_address = local.ip_addresses[each.value + local.n_masters]
-  gateway    = local.wparams.vm.gateway
-  nameserver = local.wparams.vm.nameserver
+  ip_address   = local.ip_addresses[each.value + local.n_masters]
+  gateway      = local.wparams.vm.gateway
+  nameserver   = local.wparams.vm.nameserver
 
-  ciuser = var.vm_ci_user
-  cipassword = var.vm_ci_password
-  sshkeys = data.local_file.vm_ci_ssh_pub_key.content
+  ciuser     = local.wsensparams.vm.ci_user
+  cipassword = local.wsensparams.vm.ci_password
+  sshkeys    = data.local_file.vm_ci_ssh_pub_key.content
 }
 
 resource "local_file" "k3s_ansible_inventory_file" {
-  content = templatefile("${path.module}/templates/hosts.yml.tftpl", 
+  content = templatefile("${path.module}/templates/hosts.yml.tftpl",
     {
-      masters = module.masters
-      agents = module.agents
-      ansible_user = var.vm_ci_user
+      masters                      = module.masters
+      agents                       = module.agents
+      ansible_user                 = local.wsensparams.vm.ci_user
       ansible_ssh_private_key_file = local.vm_ci_ssh_private_key_path
     }
   )
@@ -192,13 +244,13 @@ resource "local_file" "k3s_ansible_inventory_file" {
 }
 
 resource "local_file" "k3s_ansible_group_vars_all" {
-  content = templatefile("${path.module}/templates/group_vars-all.yml.tftpl", 
+  content = templatefile("${path.module}/templates/group_vars-all.yml.tftpl",
     {
-      metal_lb_ip_range = var.metal_lb_ip_range
-      apiserver_endpoint = var.apiserver_endpoint
-      system_timezone = var.system_timezone
-      k3s_token = var.k3s_token
-      ansible_user = var.vm_ci_user
+      metal_lb_ip_range  = local.wsensparams.metal_lb_ip_range
+      apiserver_endpoint = local.wsensparams.apiserver_endpoint
+      system_timezone    = local.wsensparams.vm.system_timezone
+      k3s_token          = local.wsensparams.k3s_token
+      ansible_user       = local.wsensparams.vm.ci_user
     }
   )
   filename = "external/k3s-ansible/inventory/terraform/group_vars/all.yml"

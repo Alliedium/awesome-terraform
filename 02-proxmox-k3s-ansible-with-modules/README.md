@@ -13,15 +13,14 @@ N_VMS=3
  and `tfrepl` from https://github.com/andreineculau/tfrepl
 - defined Terraform variable values via running
 ```
-cp ./variables.tfvars.example ./variables.tfvars
-cp ./variables-k3s.tfvars.example ./variables-k3s.tfvars
+cp ./variables.tfvars.example ./my.tfvars
 ```
 and then changing values in `variables.tfvars` and
 `variables-k3s.tfvars` to match your case.
 
 ## VM provisioning for k3s cluster
 ```
-terraform apply -var-file ./variables.tfvars
+terraform apply -var-file ./my.tfvars
 ```
 
 You can also re-generate Ansible inventory via
@@ -47,10 +46,39 @@ kubectl get pods --kubeconfig ./k3s-tf.kubeconfig -A
 
 
 ## References
+
+### Terraform console alternatives
+- https://github.com/paololazzari/terraform-repl
+- https://github.com/andreineculau/tfrepl
+
+### Terraform overview
+
+- https://blog.gruntwork.io/an-introduction-to-terraform-f17df9c6d180#a9b0
+- https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9
+- https://github.com/hashicorp/terraform/issues/516
+- https://blog.gruntwork.io/a-comprehensive-guide-to-managing-secrets-in-your-terraform-code-1d586955ace1
+
+### Integration with k3s-ansible playbook
+
+- https://github.com/techno-tim/k3s-ansible
 - https://developer.hashicorp.com/terraform/language/expressions/strings#string-templates
 - https://developer.hashicorp.com/terraform/language/functions/templatefile
 - https://developer.hashicorp.com/terraform/language/data-sources
 - https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file
 - https://developer.hashicorp.com/terraform/tutorials/configuration-language/sensitive-variables
-- https://github.com/paololazzari/terraform-repl
-- https://github.com/andreineculau/tfrepl
+
+### Deepmerge
+
+- https://github.com/Invicton-Labs/terraform-null-deepmerge
+- https://github.com/Kalepa/terraform-null-deepmerge
+- https://github.com/cloudposse/terraform-provider-utils
+
+- https://github.com/hashicorp/terraform/issues/24987
+- https://github.com/hashicorp/terraform/issues/22316
+- https://github.com/cloudposse/terraform-provider-utils/issues/11
+
+### Proxmox provider
+
+- https://github.com/Telmate/terraform-provider-proxmox
+- https://pve.proxmox.com/pve-docs/qm.1.html
+

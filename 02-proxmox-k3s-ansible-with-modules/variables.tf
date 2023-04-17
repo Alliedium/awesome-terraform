@@ -1,24 +1,24 @@
 variable "workspace_params" {
   type = map(object({
     vm = object({
-      master_name_spec = string,
-      agent_name_spec  = string,
-      base_name_spec = string,
-      n_masters      = number,
-      n_agents       = number,
-      start_ip       = string,
-      cores          = optional(number, 2),
-      cpu            = optional(string, "kvm64"),
-      memory         = optional(number, 2048),
-      gateway        = string,
-      nameserver     = string,
-      disk_size      = string,
-      disk_storage   = string,
-      pool           = string,
-      target_nodes   = list(string),
-      bridge         = string
+      master_name_spec = optional(string),
+      agent_name_spec  = optional(string),
+      base_name_spec   = optional(string),
+      n_masters        = optional(number),
+      n_agents         = optional(number),
+      start_ip         = optional(string),
+      cores            = optional(number, 2),
+      cpu              = optional(string, "kvm64"),
+      memory           = optional(number, 2048),
+      gateway          = optional(string),
+      nameserver       = optional(string),
+      disk_size        = optional(string),
+      disk_storage     = optional(string),
+      pool             = optional(string),
+      target_nodes     = optional(list(string)),
+      bridge           = optional(string)
     }),
-    pve_api_url = string
+    pve_api_url = optional(string)
   }))
   description = <<EOF
     (Required) vm.master_name_spec  - name template with a single placeholder
@@ -57,42 +57,65 @@ variable "workspace_params" {
 variable "workspace_default_params" {
   type = object({
     vm = object({
-      master_name_spec = string,
-      agent_name_spec  = string,
-      base_name_spec = string,
-      n_masters      = number,
-      n_agents       = number,
-      start_ip       = string,
-      cores          = optional(number, 2),
-      cpu            = optional(string, "kvm64"),
-      memory         = optional(number, 2048),
-      gateway        = string,
-      nameserver     = string,
-      disk_size      = string,
-      disk_storage   = string,
-      pool           = string,
-      target_nodes   = list(string),
-      bridge         = string
+      master_name_spec = optional(string),
+      agent_name_spec  = optional(string),
+      base_name_spec   = optional(string),
+      n_masters        = optional(number),
+      n_agents         = optional(number),
+      start_ip         = optional(string),
+      cores            = optional(number, 2),
+      cpu              = optional(string, "kvm64"),
+      memory           = optional(number, 2048),
+      gateway          = optional(string),
+      nameserver       = optional(string),
+      disk_size        = optional(string),
+      disk_storage     = optional(string),
+      pool             = optional(string),
+      target_nodes     = optional(list(string)),
+      bridge           = optional(string)
     }),
-    pve_api_url = string
+    pve_api_url = optional(string)
   })
 }
 
-variable "vm_ci_user" { 
-  type = string
-  description = "cloud-init user for provisioning"
-  sensitive = true
+
+variable "workspace_sensitive_params" {
+  type = map(object({
+    vm = object({
+      ci_user             = optional(string),
+      ci_password         = optional(string),
+      ci_ssh_pub_key_path = optional(string),
+      system_timezone     = optional(string)
+    }),
+    metal_lb_ip_range  = optional(string),
+    apiserver_endpoint = optional(string),
+    k3s_token          = optional(string)
+  }))
+  description = <<EOF
+    (Optional) vm.ci_user        -  cloud-init user for provisioning
+    (Optional) vm.ci_password    -  cloud-init user's password 
+    (Optional) vm.ci_ssh_pub_key_path - cloud-init user's public ssh key
+    (Optional) vm.system_timezone   - timezone on K3s nodes 
+    (Optional) metal_lb_ip_range - Metal LB IP range. Example: '192.168.30.80-192.168.30.90'
+    (Optional) apiserver_endpoint - virtual ip-address which will be configured on each master
+    (Optional) k3s_token -  used to allow masters talk with each other securely
+       this token should be alpha numeric only
+  EOF
+  sensitive   = true
 }
 
-variable "vm_ci_password" {
-  type = string
-  description = "cloud-init user's password"
-  sensitive = true
+# Unfortunately, we have to repeat type definition here,
+# see https://github.com/hashicorp/terraform/issues/30386
+variable "workspace_sensitive_default_params" {
+  type = object({
+    vm = object({
+      ci_user             = optional(string),
+      ci_password         = optional(string),
+      ci_ssh_pub_key_path = optional(string),
+      system_timezone     = optional(string)
+    }),
+    metal_lb_ip_range  = optional(string),
+    apiserver_endpoint = optional(string),
+    k3s_token          = optional(string)
+  })
 }
-
-variable "vm_ci_ssh_pub_key_path" {
- type = string
- description = "cloud-init user's public ssh key"
- sensitive = true
-}
-    
