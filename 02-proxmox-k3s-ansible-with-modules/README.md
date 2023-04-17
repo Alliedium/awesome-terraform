@@ -84,6 +84,11 @@ instead of using https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud
 or via Ansible
 - Wrap k3s-ansible Ansible playbook with our own Ansible playbook that
   automatically waits for cloud-init to finish.
+- We could ignore some of the parameteres via Terraform Lifecycles, see https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle
+- Terraform state can we stored in a remote backend (S3 for instance),
+  see https://developer.hashicorp.com/terraform/language/settings/backends/configuration
+- We could check that we can connect to the k3s cluster via the wrapper
+  Ansible playbook
 
 ## References
 
@@ -92,14 +97,12 @@ or via Ansible
 - https://github.com/andreineculau/tfrepl
 
 ### Terraform overview
-
 - https://blog.gruntwork.io/an-introduction-to-terraform-f17df9c6d180#a9b0
 - https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9
 - https://github.com/hashicorp/terraform/issues/516
 - https://blog.gruntwork.io/a-comprehensive-guide-to-managing-secrets-in-your-terraform-code-1d586955ace1
 
 ### Integration with k3s-ansible playbook
-
 - https://github.com/techno-tim/k3s-ansible
 - https://developer.hashicorp.com/terraform/language/expressions/strings#string-templates
 - https://developer.hashicorp.com/terraform/language/functions/templatefile
@@ -107,17 +110,14 @@ or via Ansible
 - https://developer.hashicorp.com/terraform/tutorials/configuration-language/sensitive-variables
 
 ### Deepmerge
-
 - https://github.com/Invicton-Labs/terraform-null-deepmerge
 - https://github.com/Kalepa/terraform-null-deepmerge
 - https://github.com/cloudposse/terraform-provider-utils
-
 - https://github.com/hashicorp/terraform/issues/24987
 - https://github.com/hashicorp/terraform/issues/22316
 - https://github.com/cloudposse/terraform-provider-utils/issues/11
 
 ### Proxmox provider
-
 - https://github.com/Telmate/terraform-provider-proxmox
 - https://pve.proxmox.com/pve-docs/qm.1.html
 
