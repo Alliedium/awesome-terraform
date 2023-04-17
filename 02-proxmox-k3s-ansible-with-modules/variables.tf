@@ -87,6 +87,8 @@ variable "workspace_sensitive_params" {
       ci_ssh_pub_key_path = optional(string),
       system_timezone     = optional(string)
     }),
+    pm_api_token_id    = optional(string),
+    pm_api_token_secret= optional(string),
     metal_lb_ip_range  = optional(string),
     apiserver_endpoint = optional(string),
     k3s_token          = optional(string)
@@ -100,6 +102,8 @@ variable "workspace_sensitive_params" {
     (Optional) apiserver_endpoint - virtual ip-address which will be configured on each master
     (Optional) k3s_token -  used to allow masters talk with each other securely
        this token should be alpha numeric only
+    (Optional) pm_api_token_id    - Proxmox API token id 
+    (Optional) pm_api_token_secret - Proxmox API token secret
   EOF
   sensitive   = true
 }
@@ -114,6 +118,8 @@ variable "workspace_sensitive_default_params" {
       ci_ssh_pub_key_path = optional(string),
       system_timezone     = optional(string)
     }),
+    pm_api_token_id    = optional(string),
+    pm_api_token_secret= optional(string),
     metal_lb_ip_range  = optional(string),
     apiserver_endpoint = optional(string),
     k3s_token          = optional(string)

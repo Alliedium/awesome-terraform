@@ -68,6 +68,8 @@ workspace_sensitive_params = {
       ci_user = "suser-prod"
       ci_password = "superpw-prod"
     },
+    pm_api_token_id    = "your-proxmox-token-id"
+    pm_api_token_secret= "your-proxmox-token-secret"
     metal_lb_ip_range = "10.109.1.71-10.109.1.90" 
     apiserver_endpoint = "10.109.1.30" 
     k3s_token = "prod-c1k7nhfy26lg5way91eaas2npn5"
@@ -81,6 +83,8 @@ workspace_sensitive_default_params = {
     ci_ssh_pub_key_path = "path-to-your-public-ssh-key"
     system_timezone = "Your/Timezone"
   }
+  pm_api_token_id    = "your-proxmox-token-id"
+  pm_api_token_secret= "your-proxmox-token-secret"
   metal_lb_ip_range = "10.109.1.101 - 10.109.1.110"
   apiserver_endpoint = "10.109.1.50"
   k3s_token = "default-c1k7nhfy26lg5way91eaas2npn5"
