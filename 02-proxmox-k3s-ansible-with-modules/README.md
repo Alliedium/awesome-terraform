@@ -141,6 +141,7 @@ or via Ansible
 - https://github.com/developer-guy/kubernetes-cluster-setup-using-terraform-and-k3s-on-digitalocean
 
 ### Terraform Advanced topics
+- https://developer.hashicorp.com/terraform/language/modules/develop#when-to-write-a-module
 - https://stackoverflow.com/questions/72183481/how-to-describe-an-object-type-variable-in-terraform
 - https://developer.hashicorp.com/terraform/language/expressions/strings#heredoc-strings
 - https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle
