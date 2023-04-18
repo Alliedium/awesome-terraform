@@ -142,6 +142,8 @@ We could
   place is to demonstrate how local modules can reference each other.
 - Create VM templates via https://github.com/pvelati/ansible-role-proxmox-kvm-mgmt
 instead of using https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell
+- Generate SSH key automatically either via https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key
+  or via `local-exec`, see https://developer.hashicorp.com/terraform/language/resources/provisioners/local-exec
 - Extract kubeconfig  via https://registry.terraform.io/providers/tenstad/remote/latest/docs/data-sources/file
 or via Ansible
 - Wrap k3s-ansible Ansible playbook with our own Ansible playbook that
