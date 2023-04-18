@@ -31,7 +31,7 @@ sudo pacman -S ipcalc --no-confirm
 and `terraform-repl` and `tfrepl` from https://github.com/paololazzari/terraform-repl
 and https://github.com/andreineculau/tfrepl
 
-## A quick walk-though the architecture of the configuration
+## A quick overview of the configuration architecture
 ### k3s-ansible Ansible playbook
 (https://github.com/techno-tim/k3s-ansible)
 is an Ansible playbook for installing k3s cluster on already provisioned
