@@ -22,6 +22,11 @@ cd ./03-aws-localstack
 
 ## Start LocalStack
 Follow https://docs.localstack.cloud/getting-started/installation/#starting-localstack-with-the-localstack-cli
+Please note that by default LocalStack starts with ephemeral storage, meaning that,
+once you terminate your LocalStack instance, all state will be
+discarded. Persistence can also be enabled but only in a payed
+LocalStack Pro version (see https://docs.localstack.cloud/references/persistence-mechanism/).
+
 
 ## Download and run LocalStack Cockpit
 On Linux it runs as AppImage, see https://localstack.cloud/products/cockpit/
@@ -94,10 +99,13 @@ the block that starts with
 terraform {
   backend "s3" {
 ```
-and applying our configuration again
+and running `init` again:
 ```
-terraform apply
+terraform init
 ```
+Please note that running `terraform init` is absolutely necessary as
+this is how Terraform "enables" our new backend.
+
 Terraform will ask us if it is ok to move the state to S3, we should say
 `yes` and as a result we'll see that `tf-state` bucket now contains
 `terraform.tfstate` file. The local file `terraform.tfstate` is no
@@ -139,13 +147,46 @@ https://developer.hashicorp.com/terraform/language/settings/backends/configurati
 design;
 - `terraform apply` ignores configurations in other modules which is not
   always convenient as sometimes it might be necessary to apply
-  everything with a single command.
+  everything with a single command. Same is true for `terraform init`.
 
 All these problems are fully or partially solved by the tool called
 "Terragrunt" (see
 https://terragrunt.gruntwork.io/docs/getting-started/quick-start/#introduction).
 Our next example will be based on using Terragrunt to refactor our
 current example and apply DRY principle.
+
+## Applying configurations of "app" and "db" modules
+Let us run `init` and `apply` in both `app` and `db` subfolders:
+
+```
+cd ./app
+terraform init
+terraform apply
+cd ../db
+terraform init
+terraform apply
+```
+
+After these commands our terminal-based monitoring (that one we started
+above via `watch`) should show us
+- three AWS S3 buckets
+  - `tf-state`
+  - `app/tf-state`
+  - `db/tf-state`
+- single DynamoDB table `terraform-lock`
+
+The reason we have a single table for all the modules is because we can
+store locks for different modules inside the same table. This can be
+checked via
+```
+awsl dynamodb scan --table-name terraform-lock
+```
+command.
+
+
+```
+awsl dynamodb scan --table-name terraform-lock
+```
 
 ## References
 ### Modules
@@ -159,6 +200,7 @@ current example and apply DRY principle.
 - https://docs.localstack.cloud/user-guide/integrations/terraform/
 - https://docs.localstack.cloud/getting-started/installation/#localstack-cli
 - https://localstack.cloud/products/cockpit/
+- https://docs.localstack.cloud/references/persistence-mechanism/
 
 ### S3 backend
 - https://developer.hashicorp.com/terraform/language/settings/backends/configuration
