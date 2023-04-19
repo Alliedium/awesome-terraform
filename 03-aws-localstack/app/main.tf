@@ -16,7 +16,7 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket                      = "tf-state"
-    key                         = "terraform.tfstate"
+    key                         = "app/terraform.tfstate"
     region                      = "us-east-1"
     endpoint                    = "http://s3.localhost.localstack.cloud:4566"
     skip_credentials_validation = true
@@ -28,32 +28,8 @@ terraform {
   }
 }
 
-resource "aws_s3_bucket" "tfstate_bucket" {
-  bucket = "tf-state"
-}
 
-resource "aws_s3_bucket_versioning" "versioning_example" {
-  bucket = aws_s3_bucket.tfstate_bucket.id
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-resource "aws_dynamodb_table" "terraform_lock" {
-    name           = "terraform-lock"
-    read_capacity  = 5
-    write_capacity = 5
-    hash_key       = "LockID"
-    attribute {
-        name = "LockID"
-        type = "S"
-    }
-    tags = {
-        "Name" = "DynamoDB Terraform State Lock Table"
-    }
-}
-
-resource "aws_s3_bucket" "main_bucket" {
-  bucket = "main-bucket"
+resource "aws_s3_bucket" "app_bucket" {
+  bucket = "app-bucket"
 }
 
