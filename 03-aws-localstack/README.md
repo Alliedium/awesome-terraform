@@ -3,6 +3,7 @@
 - Manjaro/Arch Linux (preferred)
 - Python3 + pip
 - Terraform 
+- Docker
 ```
 sudo pacman -S terraform --no-confirm
 ```
