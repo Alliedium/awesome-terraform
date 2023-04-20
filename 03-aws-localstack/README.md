@@ -1,9 +1,13 @@
 # AWS LocalStack, Integration with Terraform 
 ## Prerequisites
 - Manjaro/Arch Linux (preferred)
+- Docker (see
+  https://github.com/Alliedium/awesome-linux-config/blob/master/manjaro/basic/install_docker.sh)
 - Python3 + pip
+```
+sudo pacman -S python-pip --no-confirm
+```
 - Terraform 
-- Docker
 ```
 sudo pacman -S terraform --no-confirm
 ```
@@ -22,15 +26,46 @@ cd ./03-aws-localstack
 ```
 
 ## Start LocalStack
-Follow https://docs.localstack.cloud/getting-started/installation/#starting-localstack-with-the-localstack-cli
-Please note that by default LocalStack starts with ephemeral storage, meaning that,
-once you terminate your LocalStack instance, all state will be
-discarded. Persistence can also be enabled but only in a payed
-LocalStack Pro version (see https://docs.localstack.cloud/references/persistence-mechanism/).
+All you need to do is to run
+```
+localstack start
+```
+from terminal (see https://docs.localstack.cloud/getting-started/installation/#starting-localstack-with-the-localstack-cli).
 
+Please make sure that you keep the terminal window where you started
+LocalStack opened since the moment you close it LocalStack shuts down.
+
+Also, please note that by default LocalStack starts with ephemeral storage, meaning that,
+once LocalStack instance is terminated, all state is 
+discarded. Persistence can be enabled but only in a payed
+LocalStack Pro version (see https://docs.localstack.cloud/references/persistence-mechanism/).
 
 ## Download and run LocalStack Cockpit
 On Linux it runs as AppImage, see https://localstack.cloud/products/cockpit/
+
+## Configure AWS CLI to use LocalStack
+The easiest way to do it is to create AWS CLI profile called
+`localstack` using `aws configure`:
+
+```
+aws configure --profile localstack
+```
+and enter the following:
+
+```
+AWS Access Key ID: local 
+AWS Secret Access Key: local 
+Default region name: us-east-1 
+Default output format [None]: <Press Enter>
+```
+Then change your current AWS CLI profile to `localstack` via
+```
+export AWS_PROFILE=localstack
+```
+or (assuming you have AWS plugin for Oh-My-Zsh installed, see https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/aws/aws.plugin.zsh) via 
+```
+asp localstack
+```
 
 ## Configure Terraform to use LocalStack
 We are not going to use `tflocal` script that is supposed to lower the entry
@@ -78,6 +113,14 @@ so that we can write `watch awsl ...` and monitor
 - list of DynamoDB tables via `watch awsl dynamodb list-tables`.
 It would make sense to run each of these commands in separate tiles of
 the terminal so that we can monitor all the resources in parallel.
+
+Please note that it is necessary to switch your AWS CLI profile to
+`localstack` (the one we created above) so that AWS CLI knows that it
+should connect to LocalStack. Just specifying `--entrypoint` might not
+be enough for some AWS CLI subcommands (such as `dynamodb`), while
+others (like `s3`) might work even when profile is not switched to
+`localstack`. 
+
 Since `s3://tf-state` bucket we create have versions enabled it should
 be possible to watch all versions of the state via 
 ```
@@ -222,3 +265,7 @@ awsl dynamodb scan --table-name terraform-lock
 - https://github.com/gruntwork-io/terragrunt
 - https://terragrunt.gruntwork.io/docs/getting-started/quick-start/#introduction
 - https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/
+
+### OhMyZsh
+https://github.com/ohmyzsh/ohmyzsh/
+https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/aws/aws.plugin.zsh
