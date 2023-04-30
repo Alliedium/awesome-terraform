@@ -14,7 +14,8 @@ with
 
 ```
 Pz_VM_NAME_PREFIX=base-vm-tf-
-N_VMS=3
+Pz_N_VMS=3 # choose 3 VMs for default workspace    (n_masters = 2 and n_agents = 1)
+Pz_N_VMS=4 # choose 4 VMs for production workspace (n_masters = 3 and n_agents = 1)
 ```
 - defined Terraform variable values via running
 ```
@@ -30,6 +31,12 @@ sudo pacman -S ipcalc --no-confirm
 ```
 and `terraform-repl` and `tfrepl` from https://github.com/paololazzari/terraform-repl
 and https://github.com/andreineculau/tfrepl
+
+- Install `ansible` and `python-netaddr` packages
+```
+sudo pacman -S ansible --no-confirm
+sudo pacman -S python-netaddr --no-confirm
+```
 
 ## A quick overview of the configuration architecture
 ### k3s-ansible Ansible playbook
