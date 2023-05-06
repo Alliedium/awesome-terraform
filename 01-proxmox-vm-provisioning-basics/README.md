@@ -7,10 +7,10 @@ With at least two nodes
 ###  Clone git repository 
 via
 ```
-git clone https://github.com/Alliedium/awesome-terraform.git` 
+git clone https://github.com/Alliedium/awesome-terraform.git
+cd ./awesome-terraform
 git submodule init
 git submodule update
-cd ./awesome-terraform
 ```
 ### Install terraform
 on Manjaro/ArchLinux via
@@ -44,7 +44,7 @@ The first limitation requires us to create a separate template (or just
 a VM which can be used as a template) on each target node of Proxmox.
 For that task we will use shell scripts from
 ```
-https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell`
+https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell
 ```
 repo.
 
@@ -135,7 +135,7 @@ following tasks:
   `terraform init` will download the necessary module code and install it
   in the appropriate directory.
 - Initialize the backend: If the configuration uses a remote backend,
-  terraform init will initialize the backend and set up any necessary
+  `terraform init` will initialize the backend and set up any necessary
   authentication or connection details.
 - Overall, `terraform init` is an essential command that ensures that your
   Terraform configuration is set up correctly and ready to be used.
@@ -330,7 +330,7 @@ information.
 We can also optionally save the plan to a file via
 
 ```
-terraform plan -var-file my.tfvars -out my.plan`
+terraform plan -var-file my.tfvars -out my.plan
 ```
 
 ## Show the current plan
