@@ -11,6 +11,7 @@ git clone https://github.com/Alliedium/awesome-terraform.git
 cd ./awesome-terraform
 git submodule init
 git submodule update
+cd ./01-proxmox-vm-provisioning-basics
 ```
 ### Install terraform
 on Manjaro/ArchLinux via
