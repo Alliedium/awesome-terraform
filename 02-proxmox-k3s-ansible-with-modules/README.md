@@ -3,6 +3,7 @@ This example assumes you
 - cloned this repository with git submodules:
 ```
 git clone https://github.com/Alliedium/awesome-terraform.git
+cd ./awesome-terraform
 git submodule init
 git submodule update
 cd ./02-proxmox-k3s-ansible-with-modules

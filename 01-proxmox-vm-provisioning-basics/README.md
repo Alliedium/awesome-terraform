@@ -7,10 +7,11 @@ With at least two nodes
 ###  Clone git repository 
 via
 ```
-git clone https://github.com/Alliedium/awesome-terraform.git` 
+git clone https://github.com/Alliedium/awesome-terraform.git
+cd ./awesome-terraform
 git submodule init
 git submodule update
-cd ./awesome-terraform
+cd ./01-proxmox-vm-provisioning-basics
 ```
 ### Install terraform
 on Manjaro/ArchLinux via
@@ -44,7 +45,7 @@ The first limitation requires us to create a separate template (or just
 a VM which can be used as a template) on each target node of Proxmox.
 For that task we will use shell scripts from
 ```
-https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell`
+https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell
 ```
 repo.
 
@@ -135,7 +136,7 @@ following tasks:
   `terraform init` will download the necessary module code and install it
   in the appropriate directory.
 - Initialize the backend: If the configuration uses a remote backend,
-  terraform init will initialize the backend and set up any necessary
+  `terraform init` will initialize the backend and set up any necessary
   authentication or connection details.
 - Overall, `terraform init` is an essential command that ensures that your
   Terraform configuration is set up correctly and ready to be used.
@@ -330,7 +331,7 @@ information.
 We can also optionally save the plan to a file via
 
 ```
-terraform plan -var-file my.tfvars -out my.plan`
+terraform plan -var-file my.tfvars -out my.plan
 ```
 
 ## Show the current plan
@@ -789,40 +790,40 @@ terraform workspace delete -force import-test
 ```
 
 ## References
-https://github.com/Alliedium/awesome-terraform.git
-https://graphviz.org/
-https://github.com/Telmate/terraform-provider-proxmox
-https://github.com/Telmate/terraform-provider-proxmox/issues/536#issuecomment-1144705404
-https://github.com/Telmate/terraform-provider-proxmox/pull/725
-https://github.com/Telmate/terraform-provider-proxmox/issues
-https://github.com/Telmate/terraform-provider-proxmox/issues/284
-https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell
-https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell#4-export-variables-from-your-configuration
-https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md
-https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md#creating-the-connection-via-username-and-api-token
-https://pve.proxmox.com/wiki/User_Management
-https://graphviz.org/doc/info/lang.html
-https://developer.hashicorp.com/terraform/cli/commands/plan
-https://developer.hashicorp.com/terraform/cli/commands/apply
-https://developer.hashicorp.com/terraform/language/state).
-https://developer.hashicorp.com/terraform/language/values/outputs
-https://developer.hashicorp.com/terraform/cli/commands/destroy
-https://developer.hashicorp.com/terraform/cloud-docs/workspaces
-https://developer.hashicorp.com/terraform/language/state/workspaces
-https://developer.hashicorp.com/terraform/cloud-docs/workspaces#terraform-cloud-vs-terraform-cli-workspaces
-https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
-https://github.com/Alliedium/awesome-proxmox
-https://github.com/Telmate/terraform-provider-proxmox
-https://pve.proxmox.com/wiki/User_Management
-https://github.com/Telmate/terraform-provider-proxmox/issues/687#issuecomment-1479322276
-https://blog.gruntwork.io/an-introduction-to-terraform-f17df9c6d180#a9b0
-https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9
-https://upcloud.com/resources/tutorials/terraform-variables
-https://developer.hashicorp.com/terraform/cli/commands/plan
-https://developer.hashicorp.com/terraform/cli/commands/apply
-https://developer.hashicorp.com/terraform/cli/commands/destroy
-https://github.com/Alliedium/awesome-proxmox
-https://graphviz.org/doc/info/lang.html
-https://github.com/paololazzari/terraform-repl
-https://github.com/andreineculau/tfrepl
+- https://github.com/Alliedium/awesome-terraform.git
+- https://graphviz.org/
+- https://github.com/Telmate/terraform-provider-proxmox
+- https://github.com/Telmate/terraform-provider-proxmox/issues/536#issuecomment-1144705404
+- https://github.com/Telmate/terraform-provider-proxmox/pull/725
+- https://github.com/Telmate/terraform-provider-proxmox/issues
+- https://github.com/Telmate/terraform-provider-proxmox/issues/284
+- https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell
+- https://github.com/Alliedium/awesome-proxmox/tree/main/vm-cloud-init-shell#4-export-variables-from-your-configuration
+- https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md
+- https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md#creating-the-connection-via-username-and-api-token
+- https://pve.proxmox.com/wiki/User_Management
+- https://graphviz.org/doc/info/lang.html
+- https://developer.hashicorp.com/terraform/cli/commands/plan
+- https://developer.hashicorp.com/terraform/cli/commands/apply
+- https://developer.hashicorp.com/terraform/language/state).
+- https://developer.hashicorp.com/terraform/language/values/outputs
+- https://developer.hashicorp.com/terraform/cli/commands/destroy
+- https://developer.hashicorp.com/terraform/cloud-docs/workspaces
+- https://developer.hashicorp.com/terraform/language/state/workspaces
+- https://developer.hashicorp.com/terraform/cloud-docs/workspaces#terraform-cloud-vs-terraform-cli-workspaces
+- https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
+- https://github.com/Alliedium/awesome-proxmox
+- https://github.com/Telmate/terraform-provider-proxmox
+- https://pve.proxmox.com/wiki/User_Management
+- https://github.com/Telmate/terraform-provider-proxmox/issues/687#issuecomment-1479322276
+- https://blog.gruntwork.io/an-introduction-to-terraform-f17df9c6d180#a9b0
+- https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9
+- https://upcloud.com/resources/tutorials/terraform-variables
+- https://developer.hashicorp.com/terraform/cli/commands/plan
+- https://developer.hashicorp.com/terraform/cli/commands/apply
+- https://developer.hashicorp.com/terraform/cli/commands/destroy
+- https://github.com/Alliedium/awesome-proxmox
+- https://graphviz.org/doc/info/lang.html
+- https://github.com/paololazzari/terraform-repl
+- https://github.com/andreineculau/tfrepl
 
