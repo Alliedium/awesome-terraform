@@ -214,9 +214,9 @@ terraform apply
 After these commands our terminal-based monitoring (that one we started
 above via `watch`) should show us
 - three AWS S3 buckets
-  - `terraform.tfstate`
-  - `app/terraform.tfstate`
-  - `db/terraform.tfstate`
+  - `tf-state`
+  - `app/tf-state`
+  - `db/tf-state`
 - single DynamoDB table `terraform-lock`
 
 The reason we have a single table for all the modules is because we can
