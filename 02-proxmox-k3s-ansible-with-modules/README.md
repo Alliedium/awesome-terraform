@@ -28,15 +28,15 @@ and environment.
 
 - Install `ipcalc` via 
 ```
-sudo pacman -S ipcalc --no-confirm
+sudo pacman -S ipcalc --noconfirm
 ```
 and `terraform-repl` and `tfrepl` from https://github.com/paololazzari/terraform-repl
 and https://github.com/andreineculau/tfrepl
 
 - Install `ansible` and `python-netaddr` packages
 ```
-sudo pacman -S ansible --no-confirm
-sudo pacman -S python-netaddr --no-confirm
+sudo pacman -S ansible --noconfirm
+sudo pacman -S python-netaddr --noconfirm
 ```
 
 ## A quick overview of the configuration architecture
