@@ -601,7 +601,7 @@ and wait for VMs to be provisioned in Proxmox cluster.
 After that let us now create a new workspace named `production` and make it active via
 
 ```
-terraform workspace select production
+terraform workspace select -or-create production
 ```
 
 We can check that `production` is now an active workspace:
