@@ -5,11 +5,11 @@
   https://github.com/Alliedium/awesome-linux-config/blob/master/manjaro/basic/install_docker.sh)
 - Python3 + pip
 ```
-sudo pacman -S python-pip --no-confirm
+sudo pacman -S python-pip --noconfirm
 ```
 - Terraform 
 ```
-sudo pacman -S terraform --no-confirm
+sudo pacman -S terraform --noconfirm
 ```
 - LocalStack
 ```
@@ -17,7 +17,7 @@ pip install localstack
 ```
 - AWS CLI v2
 ```
-sudo pacman -S aws-cli-v2 --no-confirm
+sudo pacman -S aws-cli-v2 --noconfirm
 ```
 - Clone this repo 
 ```
