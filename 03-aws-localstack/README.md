@@ -89,7 +89,7 @@ Since the first stage requires us not to create any other resources
 apart from the ones required for storing the state or its lock we need
 to modify `main.tf` temporarily by commenting the blocks that start with
 ```
-resource "aws_s3_bucket" "test-bucket" {
+resource "aws_s3_bucket" "main-bucket" {
 ```
 and 
 ```
@@ -121,11 +121,6 @@ be enough for some AWS CLI subcommands (such as `dynamodb`), while
 others (like `s3`) might work even when profile is not switched to
 `localstack`. 
 
-Since `s3://tf-state` bucket we create have versions enabled it should
-be possible to watch all versions of the state via 
-```
-awsl s3api list-object-versions --bucket tf-state
-```
 Now, once monitoring is started (and assuming LocalStack is started)
 we can run the following commands:
 ```
@@ -156,6 +151,11 @@ Terraform will ask us if it is ok to move the state to S3, we should say
 longer needed and we can safely remove it
 ```
 rm ./terraform.tfstate
+```
+Since `s3://tf-state` bucket we create have versions enabled it should
+be possible to watch all versions of the state via 
+```
+awsl s3api list-object-versions --bucket tf-state
 ```
 ## Create the main set of resources
 via uncommenting the block the starts with
@@ -228,9 +228,6 @@ awsl dynamodb scan --table-name terraform-lock
 command.
 
 
-```
-awsl dynamodb scan --table-name terraform-lock
-```
 
 ## References
 ### Modules
