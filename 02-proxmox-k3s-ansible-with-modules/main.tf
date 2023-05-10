@@ -257,3 +257,19 @@ resource "local_file" "k3s_ansible_group_vars_all" {
   )
   filename = "external/k3s-ansible/inventory/terraform/group_vars/all.yml"
 }
+
+resource "null_resource" "example" {
+provisioner "remote-exec" {
+connection {
+    type = "ssh"
+    host = local.vm_ip_subnet_parts[0]
+    user = local.wsensparams.vm.ci_user
+    private_key = file("~/.ssh/id_pve_tf_k3s_ed25519")
+    timeout = "2m"
+}
+inline = ["echo 'connected!'"]
+}
+provisioner "local-exec" {
+command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ./external/k3s-ansible/site.yml -i ./external/k3s-ansible/inventory/terraform"
+}
+}
